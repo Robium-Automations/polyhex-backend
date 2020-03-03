@@ -1,16 +1,23 @@
 package com.robiumautomations.polyhex.security
 
 import com.robiumautomations.polyhex.security.exceptions.JwtTokenMissingException
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.ServletException
 import java.io.IOException
 import javax.servlet.FilterChain
 
-class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter("/**") {
+class JwtAuthenticationFilter(
+    private val authManager: AuthenticationManager
+) : UsernamePasswordAuthenticationFilter() {
+
+  init {
+    setFilterProcessesUrl("/api/public/login")
+  }
 
   override fun requiresAuthentication(request: HttpServletRequest, response: HttpServletResponse?) = true
 
@@ -27,8 +34,8 @@ class JwtAuthenticationFilter : AbstractAuthenticationProcessingFilter("/**") {
       throw JwtTokenMissingException("No JWT token found in request headers")
     }
     val authToken = header.substring(prefix.length)
-    val authRequest = JwtAuthenticationToken(authToken)
-    return authenticationManager.authenticate(authRequest)
+    val jwtAuthToken = JwtAuthenticationToken(authToken)
+    return authManager.authenticate(jwtAuthToken)
   }
 
   @Throws(IOException::class, ServletException::class)

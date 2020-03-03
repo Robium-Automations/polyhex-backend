@@ -9,5 +9,4 @@ public class PolyhexApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PolyhexApplication.class, args);
 	}
-
 }

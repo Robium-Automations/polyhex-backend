@@ -18,7 +18,10 @@ class AuthenticationController {
   @Autowired
   private lateinit var customAuthentication: CustomAuthentication
 
-  @PostMapping("/login", consumes = [MediaType.APPLICATION_JSON_VALUE])
+  @PostMapping("/api/public/login",
+      consumes = [MediaType.APPLICATION_JSON_VALUE],
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
   fun singIn(@RequestBody user: UserCredentials): ResponseEntity<String> {
     val token: String
     try {

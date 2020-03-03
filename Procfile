@@ -1,1 +1,1 @@
-web: $JAVA_OPTS -Dserver.port=$PORT -jar build/libs/polyhex-0.0.1-SNAPSHOT.war
+web: java -Dserver.port=$PORT -jar build/libs/polyhex-0.0.1-SNAPSHOT.war

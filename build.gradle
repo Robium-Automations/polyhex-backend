@@ -10,6 +10,11 @@ group = 'com.robiumautomations.polyhex'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+jar {
+    baseName = 'polyhex'
+    version = '1.0'
+}
+
 repositories {
 	mavenCentral()
 }

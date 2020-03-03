@@ -1,0 +1,1 @@
+web: java -jar build/libs/polyhex-1.0.jar

@@ -1,17 +1,18 @@
 package com.robiumautomations.polyhex.security.utils
 
-import com.robiumautomations.polyhex.models.UserCredentials
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.robiumautomations.polyhex.security.AuthenticationUser
+import com.robiumautomations.polyhex.security.utils.SecurityConstants.SALT
+import com.robiumautomations.polyhex.security.utils.SecurityConstants.SECRET
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.env.Environment
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.codec.Hex
 import org.springframework.stereotype.Component
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.*
 
 @Component
 class JwtUtils {
@@ -28,8 +29,7 @@ class JwtUtils {
           userId = body["userId"] as String,
           username = body.subject,
           authorities = listOf(SimpleGrantedAuthority(userRole)),
-          role = userRole,
-          token = token
+          role = userRole
       )
     } catch (e: JwtException) {
       null
@@ -38,27 +38,19 @@ class JwtUtils {
     }
   }
 
-  fun generateToken(user: UserCredentials): String {
-    val claims = Jwts.claims().setSubject(user.username)
-    claims["userId"] = user.userId
-    claims["role"] = user.userRole
-
-    return Jwts.builder()
-        .setClaims(claims)
-        .signWith(SignatureAlgorithm.HS512, SECRET)
-        .compact()
+  fun generateToken(user: AuthenticationUser): String {
+    return JWT.create()
+        .withSubject(user.username)
+        .withExpiresAt(Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+        .sign(Algorithm.HMAC512(SECRET.toByteArray()))
   }
 
   companion object {
 
-    private val SALT = "kssakmdsfbhsbdh4323423dhs" // TODO(move to application.properties)
-
-    private val SECRET = "abcdef" // TODO(move to application.properties)
-
     fun hashPassword(password: String): String {
       try {
         val messageDigest = MessageDigest.getInstance("MD5")
-        val result = messageDigest.digest((SALT + password + SALT).toByteArray())
+        val result = messageDigest.digest((password + SALT).toByteArray())
         return String(Hex.encode(result))
       } catch (e: NoSuchAlgorithmException) {
         throw RuntimeException(e)

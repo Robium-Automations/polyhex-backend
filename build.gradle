@@ -28,6 +28,9 @@ dependencies {
 
 	implementation 'org.projectlombok:lombok:1.18.12'
 
+	implementation 'com.auth0:java-jwt:3.10.0'
+
+
 
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {

@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 class AuthenticationUser(
     val userId: String,
     private val username: String,
-    private val token: String,
     private val authorities: List<GrantedAuthority>,
     val role: String,
     private val password: String? = null,

@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class HelloWorldController {
 
-  @GetMapping("/api/public", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/helloworld", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun helloWorld() = ResponseEntity(mapOf("Hello" to "world"), HttpStatus.OK)
 
-  @GetMapping("/api/private/helloworld_protected", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("/helloworld_protected", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun helloWorldProtected() = ResponseEntity(mapOf("Hello" to "world"), HttpStatus.OK)
 }

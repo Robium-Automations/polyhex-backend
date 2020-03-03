@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository
 interface UserRepo : JpaRepository<UserCredentials, String> {
 
   @Query(value = "SELECT * FROM user_credentials UC WHERE UC.username = :username ;", nativeQuery = true)
-  fun getByUsername(@Param("username") username: String): UserCredentials
+  fun getByUsername(@Param("username") username: String): UserCredentials?
 }

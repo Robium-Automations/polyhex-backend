@@ -18,9 +18,9 @@ class CustomAuthentication {
 
   @Throws(AuthenticationException::class)
   fun attemptAuthentication(username: String, password: String): String {
-    val checkedUser = userService.getByUsername(username)
+    val checkedUser = userService.loadUserByUsername(username)
     return if (checkedUser != null && checkedUser.password == JwtUtils.hashPassword(password)) {
-      jwtUtils.generateToken(checkedUser)
+      jwtUtils.generateToken(checkedUser as AuthenticationUser)
     } else {
       throw BadCredentialsException("Incorrect credentials: username: $username and password: $password")
     }

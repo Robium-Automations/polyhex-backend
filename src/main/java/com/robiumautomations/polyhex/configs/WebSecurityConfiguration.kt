@@ -32,7 +32,7 @@ open class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
   @Throws(Exception::class)
   override fun configure(http: HttpSecurity) {
     http.cors().and().csrf().disable().authorizeRequests()
-        .antMatchers("/helloworld", "/signin").permitAll()
+        .antMatchers("/helloworld", "/signin", "/health").permitAll()
         .anyRequest().authenticated()
         .and()
         .addFilter(JwtAuthenticationFilter(authenticationManager()))

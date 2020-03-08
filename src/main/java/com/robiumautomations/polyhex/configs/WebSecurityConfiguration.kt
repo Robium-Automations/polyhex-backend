@@ -41,6 +41,7 @@ open class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
             "/helloworld", "/health", "/signin"
         ).permitAll()
         .antMatchers(HttpMethod.POST, "/users").permitAll()
+        .antMatchers(HttpMethod.HEAD, "/usernames/*", "/emails/*").permitAll()
         .anyRequest().authenticated()
         .and()
         .addFilter(JwtAuthenticationFilter(authenticationManager()))

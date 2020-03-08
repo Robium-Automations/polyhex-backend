@@ -1,20 +1,30 @@
 package com.robiumautomations.polyhex.services
 
+import com.robiumautomations.polyhex.enums.UserRole
+import com.robiumautomations.polyhex.models.User
+import com.robiumautomations.polyhex.models.UserCredentials
+import com.robiumautomations.polyhex.models.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.repos.UserCredentialsRepo
 import com.robiumautomations.polyhex.repos.UserRepo
 import com.robiumautomations.polyhex.security.AuthenticationUser
+import com.robiumautomations.polyhex.security.utils.JwtUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
-class UserService : UserDetailsService {
+open class UserService : UserDetailsService {
 
+  @Autowired
+  private lateinit var userCredentialsRepo: UserCredentialsRepo
   @Autowired
   private lateinit var userRepo: UserRepo
 
   override fun loadUserByUsername(username: String): UserDetails? {
-    return userRepo.getByUsername(username)?.let {
+    return userCredentialsRepo.getByUsername(username)?.let {
       AuthenticationUser(
           userId = it.userId!!,
           password = it.password!!,
@@ -23,5 +33,51 @@ class UserService : UserDetailsService {
           authorities = emptyList()
       )
     }
+  }
+
+  open fun registerNewUser(registrationUser: RegistrationUser): User {
+    if (registrationUser.username.isNullOrBlank()) {
+      throw Exception("Username is not set.")
+    }
+    if (!isUsernameFree(registrationUser.username)) {
+      throw Exception("Username is already in use.")
+    }
+    registrationUser.email?.let {
+      if (!isEmailFree(it)) {
+        throw Exception("Email is already in use.")
+      }
+    }
+    if (registrationUser.password.isNullOrBlank()) {
+      throw Exception("Password is not set.")
+    }
+    val userId = UUID.randomUUID().toString()
+    UserCredentials(
+        userId = userId,
+        username = registrationUser.username,
+        email = registrationUser.email,
+        password = JwtUtils.hashPassword(registrationUser.password),
+        userRole = UserRole.user
+    ).also {
+      userCredentialsRepo.save(it)
+    }
+
+    User(
+        userId = userId,
+        username = registrationUser.username,
+        firstName = registrationUser.firstName,
+        lastName = registrationUser.lastName,
+        birthday = registrationUser.birthday
+    ).also {
+      userRepo.save(it)
+      return it
+    }
+  }
+
+  fun isEmailFree(email: String): Boolean {
+    return userCredentialsRepo.getIdByEmail(email) == null
+  }
+
+  fun isUsernameFree(username: String): Boolean {
+    return userCredentialsRepo.getIdByUsername(username) == null
   }
 }

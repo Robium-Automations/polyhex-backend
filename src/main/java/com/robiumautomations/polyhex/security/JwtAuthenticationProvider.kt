@@ -34,7 +34,7 @@ class JwtAuthenticationProvider : AbstractUserDetailsAuthenticationProvider() {
     val parsedUser = jwtUtils.parseToken(token)
 
     return parsedUser?.let {
-      val authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(parsedUser.role)
+      val authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(parsedUser.role.toString())
       AuthenticationUser(
           userId = parsedUser.userId,
           username = parsedUser.username,

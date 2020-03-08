@@ -36,26 +36,13 @@ open class UserService : UserDetailsService {
   }
 
   open fun registerNewUser(registrationUser: RegistrationUser): User {
-    if (registrationUser.username.isNullOrBlank()) {
-      throw Exception("Username is not set.")
-    }
-    if (!isUsernameFree(registrationUser.username)) {
-      throw Exception("Username is already in use.")
-    }
-    registrationUser.email?.let {
-      if (!isEmailFree(it)) {
-        throw Exception("Email is already in use.")
-      }
-    }
-    if (registrationUser.password.isNullOrBlank()) {
-      throw Exception("Password is not set.")
-    }
+    validateInputs(registrationUser)
     val userId = UUID.randomUUID().toString()
     UserCredentials(
         userId = userId,
         username = registrationUser.username,
         email = registrationUser.email,
-        password = JwtUtils.hashPassword(registrationUser.password),
+        password = JwtUtils.hashPassword(registrationUser.password!!),
         userRole = UserRole.user
     ).also {
       userCredentialsRepo.save(it)
@@ -63,7 +50,7 @@ open class UserService : UserDetailsService {
 
     User(
         userId = userId,
-        username = registrationUser.username,
+        username = registrationUser.username!!,
         firstName = registrationUser.firstName,
         lastName = registrationUser.lastName,
         birthday = registrationUser.birthday
@@ -73,11 +60,35 @@ open class UserService : UserDetailsService {
     }
   }
 
+  private fun validateInputs(registrationUser: RegistrationUser) {
+    if (registrationUser.username.isNullOrBlank()) {
+      throw Exception("Username is not set.")
+    }
+    if (registrationUser.password.isNullOrBlank()) {
+      throw Exception("Password is not set.")
+    }
+    if (!isUsernameFree(registrationUser.username)) {
+      throw Exception("Username is already in use.")
+    }
+    registrationUser.email?.let {
+      if (!isEmailFree(it)) {
+        throw Exception("Email is already in use.")
+      }
+    }
+    if (!isValidUsername(registrationUser.username)) {
+      throw Exception("Username is not valid.")
+    }
+  }
+
   fun isEmailFree(email: String): Boolean {
     return userCredentialsRepo.getIdByEmail(email) == null
   }
 
   fun isUsernameFree(username: String): Boolean {
     return userCredentialsRepo.getIdByUsername(username) == null
+  }
+
+  private fun isValidUsername(username: String): Boolean {
+    return """^(?=.{8,20}${'$'})(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])${'$'}""".toRegex().matches(username)
   }
 }

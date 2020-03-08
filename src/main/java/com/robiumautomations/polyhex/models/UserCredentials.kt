@@ -1,15 +1,12 @@
 package com.robiumautomations.polyhex.models
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.robiumautomations.polyhex.enums.UserRole
 import lombok.Data
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
-@Table(name = "users")
+@Table(name = "user_credentials")
 @Data
 class UserCredentials(
     @Id
@@ -17,10 +14,14 @@ class UserCredentials(
     val userId: String? = UUID.randomUUID().toString(),
     @Column(name = "username")
     val username: String?,
+    @Column(name = "email")
+    val email: String?,
     @Column(name = "password")
     val password: String?,
     @Column(name = "user_role")
-    val userRole: String?
+    @Enumerated(EnumType.STRING)
+    val userRole: UserRole?
 ) {
-    constructor(): this(username = null, password = null, userRole = null)
+
+  constructor() : this(username = null, email = null, password = null, userRole = null)
 }

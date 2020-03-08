@@ -2,6 +2,7 @@ package com.robiumautomations.polyhex.security.utils
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.security.AuthenticationUser
 import com.robiumautomations.polyhex.security.utils.SecurityConstants.SALT
 import com.robiumautomations.polyhex.security.utils.SecurityConstants.SECRET
@@ -24,11 +25,11 @@ class JwtUtils {
           .parseClaimsJws(token)
           .body
 
-      val userRole = body["role"] as String
+      val userRole = UserRole.valueOf(body["role"] as String)
       AuthenticationUser(
           userId = body["userId"] as String,
           username = body.subject,
-          authorities = listOf(SimpleGrantedAuthority(userRole)),
+          authorities = listOf(SimpleGrantedAuthority(userRole.toString())),
           role = userRole
       )
     } catch (e: JwtException) {

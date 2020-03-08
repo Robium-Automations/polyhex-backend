@@ -16,7 +16,12 @@ import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import com.robiumautomations.polyhex.services.UserService
+import org.springframework.http.HttpMethod
+import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.security.web.firewall.StrictHttpFirewall
+import org.springframework.security.web.firewall.HttpFirewall
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +37,11 @@ open class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
   @Throws(Exception::class)
   override fun configure(http: HttpSecurity) {
     http.cors().and().csrf().disable().authorizeRequests()
-        .antMatchers("/helloworld", "/signin", "/health").permitAll()
+        .antMatchers(
+            "/helloworld", "/health", "/signin"
+        ).permitAll()
+        .antMatchers(HttpMethod.POST, "/users").permitAll()
+        .antMatchers(HttpMethod.HEAD, "/usernames/*", "/emails/*").permitAll()
         .anyRequest().authenticated()
         .and()
         .addFilter(JwtAuthenticationFilter(authenticationManager()))
@@ -51,5 +60,18 @@ open class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
     val source = UrlBasedCorsConfigurationSource()
     source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
     return source
+  }
+
+  @Bean
+  open fun allowUrlEncodedSlashHttpFirewall(): HttpFirewall {
+    return StrictHttpFirewall().also {
+      it.setAllowUrlEncodedSlash(true)
+      it.setAllowSemicolon(true)
+    }
+  }
+
+  override fun configure(web: WebSecurity) {
+    super.configure(web)
+    web.httpFirewall(allowUrlEncodedSlashHttpFirewall())
   }
 }

@@ -1,5 +1,6 @@
 package com.robiumautomations.polyhex.security
 
+import com.robiumautomations.polyhex.enums.UserRole
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -7,7 +8,7 @@ class AuthenticationUser(
     val userId: String,
     private val username: String,
     private val authorities: List<GrantedAuthority>,
-    val role: String,
+    val role: UserRole,
     private val password: String? = null,
     private val accountNonExpired: Boolean = false,
     private val accountNonLocked: Boolean = false,

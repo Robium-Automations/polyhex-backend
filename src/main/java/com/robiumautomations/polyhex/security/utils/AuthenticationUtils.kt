@@ -1,22 +1,17 @@
 package com.robiumautomations.polyhex.security.utils
 
 import org.springframework.security.core.context.SecurityContextHolder
-import com.robiumautomations.polyhex.security.AuthenticationUser
-
-
+import com.robiumautomations.polyhex.security.JwtAuthenticationToken
 
 object AuthenticationUtils {
 
-  fun getCurrentAuthenticationUser(): AuthenticationUser {
-    return SecurityContextHolder.getContext().authentication.principal as AuthenticationUser
+  private fun getCurrentAuthentication(): JwtAuthenticationToken {
+    return SecurityContextHolder.getContext().authentication as JwtAuthenticationToken
   }
 
-  fun getCurrentUserId(): String {
-    return getCurrentAuthenticationUser().userId
-  }
+  fun getCurrentUserId() = getCurrentAuthentication().userId
 
-  fun getCurrentUsername(): String {
-    return getCurrentAuthenticationUser().username
-  }
+  fun getCurrentUsername() = getCurrentAuthentication().username
 
+  fun getCurrentUserRole() = getCurrentAuthentication().userRole
 }

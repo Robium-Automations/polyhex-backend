@@ -24,11 +24,13 @@ import java.util.*
 
 class JwtAuthenticationFilter(
     private val authManager: AuthenticationManager
-): UsernamePasswordAuthenticationFilter() {
+) : UsernamePasswordAuthenticationFilter() {
 
   @Throws(AuthenticationException::class)
-  override fun attemptAuthentication(req: HttpServletRequest,
-      res: HttpServletResponse?): Authentication {
+  override fun attemptAuthentication(
+      req: HttpServletRequest,
+      res: HttpServletResponse?
+  ): Authentication {
     try {
       val credentials = ObjectMapper()
           .readValue(req.inputStream, UserCredentials::class.java)
@@ -37,7 +39,8 @@ class JwtAuthenticationFilter(
           UsernamePasswordAuthenticationToken(
               credentials.username,
               credentials.password,
-              listOf<GrantedAuthority>())
+              listOf<GrantedAuthority>()
+          )
       )
     } catch (e: IOException) {
       throw RuntimeException(e)
@@ -45,11 +48,12 @@ class JwtAuthenticationFilter(
   }
 
   @Throws(IOException::class, ServletException::class)
-  override fun successfulAuthentication(req: HttpServletRequest,
+  override fun successfulAuthentication(
+      req: HttpServletRequest,
       res: HttpServletResponse,
       chain: FilterChain?,
-      auth: Authentication) {
-
+      auth: Authentication
+  ) {
     val token = JWT.create()
         .withSubject((auth.principal as User).username)
         .withExpiresAt(Date(System.currentTimeMillis() + EXPIRATION_TIME))

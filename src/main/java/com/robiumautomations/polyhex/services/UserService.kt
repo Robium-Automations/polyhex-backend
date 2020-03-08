@@ -9,6 +9,7 @@ import com.robiumautomations.polyhex.repos.UserRepo
 import com.robiumautomations.polyhex.security.AuthenticationUser
 import com.robiumautomations.polyhex.security.utils.JwtUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
@@ -33,6 +34,10 @@ open class UserService : UserDetailsService {
           authorities = emptyList()
       )
     }
+  }
+
+  fun getUserInfo(userId: String): User? {
+    return userRepo.findByIdOrNull(userId)
   }
 
   open fun registerNewUser(registrationUser: RegistrationUser): User {

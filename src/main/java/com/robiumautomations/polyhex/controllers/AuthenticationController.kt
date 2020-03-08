@@ -19,7 +19,7 @@ class AuthenticationController {
   private lateinit var customAuthentication: CustomAuthentication
 
   @PostMapping("/signin")
-  fun singIn(@RequestBody user: UserCredentials): ResponseEntity<String> {
+  fun singIn(@RequestBody user: UserCredentials): ResponseEntity<Any> {
     if (user.username.isNullOrEmpty()) {
       return ResponseEntity("Specify username.", HttpStatus.BAD_REQUEST)
     }
@@ -29,12 +29,13 @@ class AuthenticationController {
     val token: String
     return try {
       token = customAuthentication.attemptAuthentication(user.username, user.password)
-      val headers = HttpHeaders()
-      headers.add("Authorization", token)
-      ResponseEntity(headers, HttpStatus.OK)
+      HttpHeaders().let { headers ->
+        headers.add("Authorization", token)
+        return@let ResponseEntity(headers, HttpStatus.OK)
+      }
     } catch (e: AuthenticationException) {
       e.printStackTrace()
-      ResponseEntity("Invalid credentials.", HttpStatus.BAD_REQUEST)
+      ResponseEntity(mapOf("Message" to "Invalid credentials."), HttpStatus.BAD_REQUEST)
     }
   }
 }

@@ -2,6 +2,7 @@ package com.robiumautomations.polyhex.configs
 
 import com.robiumautomations.polyhex.security.JwtAuthenticationFilter
 import com.robiumautomations.polyhex.security.JwtAuthorizationFilter
+import com.robiumautomations.polyhex.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,11 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-import com.robiumautomations.polyhex.services.UserService
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.firewall.HttpFirewall
 

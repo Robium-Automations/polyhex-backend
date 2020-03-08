@@ -6,8 +6,6 @@ import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.security.AuthenticationUser
 import com.robiumautomations.polyhex.security.utils.SecurityConstants.SALT
 import com.robiumautomations.polyhex.security.utils.SecurityConstants.SECRET
-import io.jsonwebtoken.JwtException
-import io.jsonwebtoken.Jwts
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.codec.Hex
 import org.springframework.stereotype.Component
@@ -18,30 +16,13 @@ import java.util.*
 @Component
 class JwtUtils {
 
-  fun parseToken(token: String): AuthenticationUser? {
-    return try {
-      val body = Jwts.parser()
-          .setSigningKey(SECRET)
-          .parseClaimsJws(token)
-          .body
-
-      val userRole = UserRole.valueOf(body["role"] as String)
-      AuthenticationUser(
-          userId = body["userId"] as String,
-          username = body.subject,
-          authorities = listOf(SimpleGrantedAuthority(userRole.toString())),
-          role = userRole
-      )
-    } catch (e: JwtException) {
-      null
-    } catch (e: ClassCastException) {
-      null
-    }
-  }
+  fun parseToken(token: String) = Companion.parseToken(token)
 
   fun generateToken(user: AuthenticationUser): String {
     return JWT.create()
-        .withSubject(user.username)
+        .withSubject(user.userId)
+        .withClaim("username", user.username)
+        .withClaim("role", user.role.toString())
         .withExpiresAt(Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
         .sign(Algorithm.HMAC512(SECRET.toByteArray()))
   }
@@ -55,6 +36,25 @@ class JwtUtils {
         return String(Hex.encode(result))
       } catch (e: NoSuchAlgorithmException) {
         throw RuntimeException(e)
+      }
+    }
+
+    fun parseToken(token: String): AuthenticationUser? {
+      return try {
+        val jwt = JWT.require(Algorithm.HMAC512(SECRET.toByteArray()))
+            .build()
+            .verify(token.removePrefix(SecurityConstants.TOKEN_PREFIX))
+
+        val userRole = jwt.getClaim("role").asString()
+        AuthenticationUser(
+            userId = jwt.subject,
+            username = jwt.getClaim("username").asString(),
+            authorities = listOf(SimpleGrantedAuthority(userRole)),
+            role = UserRole.valueOf(userRole)
+        )
+      } catch (e: Exception) {
+        e.printStackTrace()
+        null
       }
     }
   }

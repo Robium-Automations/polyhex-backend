@@ -1,5 +1,9 @@
 # API documentation
 
+## GET /health
+
+Description: returns a confirmation that the server does work.
+
 ## POST /signin
 
 Parameters:
@@ -48,4 +52,86 @@ SomeHeaders: values...
 {
   "hello": "world"
 }
+```
+
+## POST /users
+
+Description: user registration
+
+Parameters:
+- **username**: mandatory, must be unique
+- **password**: mandatory, must be unique
+- **email**: must be unique
+- **firstName**: optional
+- **lastName**: optional
+- **birthday**: optional (as epoch timestamp)
+
+Response: returns 201 if everything is fine and user object. Returns 400 if something wrong, expleneation in "Message" header.
+
+Username rules:
+1. Only contains alphanumeric characters, underscore and dot.
+2. Underscore and dot can't be at the end or start of a username (e.g _username / username_ / .username / username.).
+3. Underscore and dot can't be next to each other (e.g user_.name).
+4. Underscore or dot can't be used multiple times in a row (e.g user__name / user..name).
+5. Number of characters must be between 8 to 20.
+
+**Request example**
+```
+POST /users HTTP/1.1
+
+{
+  "username": "newUser",
+  "password": "new password",
+  "firstName": "NAME"
+}
+```
+
+**Response example**
+```
+HTTP/1.1 201 CREATED
+
+{
+    "userId": "some-unique-id",
+    "username": "newUser",
+    "firstName": "NAME",
+    "lastName": null,
+    "birthday": null,
+    "universityId": null
+}
+```
+
+## HEAD /usernames/{username}
+
+Parameter:
+- **username**: mandatory.
+
+Description: check if username is availabale.
+Returns: 204 (NO_CONTENT) if available, otherwise 409 (CONFLICT)
+
+**Request example**
+```
+HEAD /usernames/admin HTTP/1.1
+```
+
+**Response example**
+```
+HTTP/1.1 409 CONFLICT
+```
+
+## HEAD /emails/{email}
+
+Parameter:
+- **email**: mandatory.
+
+Description: check if email is availabale.
+Returns: 204 (NO_CONTENT) if available, otherwise 409 (CONFLICT)
+
+**Request example**
+```
+HEAD /emails/email@mail.com HTTP/1.1
+```
+
+**Response example**
+```
+HTTP/1.1 240 NO_CONTENT
 ```

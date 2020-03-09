@@ -19,6 +19,8 @@ class FacultyService {
     val universityId = userService.getUserInfo(creatorId)?.universityId
         ?: throw Exception("No universityId for creator: $creatorId")
 
+    // TODO(check if there is university with such universityId)
+
     if (!isFacultyNameIsAvailable(universityId, facultyName)) {
       throw Exception("There is faculty with such name at the university.")
     }

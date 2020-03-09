@@ -5,6 +5,7 @@ import com.robiumautomations.polyhex.dtos.faculties.CreateFacultyRequestDto
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.services.FacultyService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -40,7 +41,6 @@ class FacultyController {
       e.printStackTrace()
       ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
     }
-
   }
 
   @GetMapping(
@@ -48,12 +48,33 @@ class FacultyController {
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getUniversityFaculties(
-      @PathVariable("universityId") universityId: String
+      @PathVariable("universityId") universityId: String,
+      @RequestParam("offset", required = false, defaultValue = "0") offset: String,
+      @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
     if (universityId.isBlank()) {
       return ResponseEntity(mapOf("Message" to "Specify 'universityId'."), HttpStatus.BAD_REQUEST)
     }
-    return ResponseEntity.ok(facultyService.getByFacultiesByUniversityId(universityId))
+
+    try {
+      offset!!.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    try {
+      limit!!.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    return with(HttpHeaders()) {
+      add("offset", offset)
+      add("limit", limit)
+      ResponseEntity(
+          facultyService.getByFacultiesByUniversityId(universityId, offset.toInt(), limit.toInt()),
+          this,
+          HttpStatus.OK
+      )
+    }
   }
 
   @GetMapping(
@@ -70,6 +91,5 @@ class FacultyController {
       return ResponseEntity.ok(it)
     }
     return ResponseEntity(HttpStatus.NO_CONTENT)
-
   }
 }

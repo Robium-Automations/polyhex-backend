@@ -38,8 +38,12 @@ class FacultyService {
     return facultyRepo.checkIfFacultyNameAvailable(universityId, facultyName).isEmpty()
   }
 
-  fun getByFacultiesByUniversityId(universityId: String): List<Faculty> {
-    return facultyRepo.getByUniversityId(universityId)
+  fun getByFacultiesByUniversityId(
+      universityId: String,
+      offset: Int = 0,
+      limit: Int = 10
+  ): List<Faculty> {
+    return facultyRepo.getByUniversityId(universityId, offset, limit)
   }
 
   fun getFacultyById(facultyId: String): Faculty? {

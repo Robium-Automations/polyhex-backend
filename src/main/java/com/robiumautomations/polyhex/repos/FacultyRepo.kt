@@ -8,8 +8,15 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FacultyRepo : JpaRepository<Faculty, String> {
 
-  @Query(value = "SELECT * FROM faculties F WHERE F.university_id = :universityId ;", nativeQuery = true)
-  fun getByUniversityId(universityId: String): List<Faculty>
+  @Query(
+      value = "SELECT * FROM faculties F WHERE F.university_id = :universityId LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getByUniversityId(
+      universityId: String,
+      offset: Int = 0,
+      limit: Int = 10
+  ): List<Faculty>
 
   @Query(
       value = "SELECT 1 FROM faculties F WHERE F.university_id = :universityId AND F.faculty_name = :facultyName ;",

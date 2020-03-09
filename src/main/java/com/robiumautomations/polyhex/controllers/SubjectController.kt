@@ -5,6 +5,7 @@ import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.services.SubjectService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -46,11 +47,31 @@ class SubjectController {
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getUniversityFaculties(
-      @PathVariable("facultyId") facultyId: String
+      @PathVariable("facultyId") facultyId: String,
+      @RequestParam("offset", required = false, defaultValue = "0") offset: String,
+      @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
     if (facultyId.isBlank()) {
       return ResponseEntity(mapOf("Message" to "Specify 'facultyId'."), HttpStatus.BAD_REQUEST)
     }
-    return ResponseEntity.ok(subjectService.getSubjectsByFacultyId(facultyId))
+    try {
+      offset.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    try {
+      limit.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    return with(HttpHeaders()) {
+      add("offset", offset)
+      add("limit", limit)
+      ResponseEntity(
+          subjectService.getSubjectsByFacultyId(facultyId, offset.toInt(), limit.toInt()),
+          this,
+          HttpStatus.OK
+      )
+    }
   }
 }

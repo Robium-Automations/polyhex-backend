@@ -40,7 +40,11 @@ class SubjectService {
     return subjectRepo.checkIfSubjectNameAvailable(facultyId, subjectName).isEmpty()
   }
 
-  fun getSubjectsByFacultyId(facultyId: String): List<Subject> {
-    return subjectRepo.getByFacultyId(facultyId)
+  fun getSubjectsByFacultyId(
+      facultyId: String,
+      offset: Int = 0,
+      limit: Int = 10
+  ): List<Subject> {
+    return subjectRepo.getByFacultyId(facultyId, offset, limit)
   }
 }

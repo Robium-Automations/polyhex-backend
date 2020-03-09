@@ -14,6 +14,13 @@ interface SubjectRepo : JpaRepository<Subject, String> {
   )
   fun checkIfSubjectNameAvailable(facultyId: String, subjectName: String): List<Int>
 
-  @Query(value = "SELECT * FROM subjects S WHERE S.faculty_id = :facultyId ;", nativeQuery = true)
-  fun getByFacultyId(facultyId: String): List<Subject>
+  @Query(
+      value = "SELECT * FROM subjects S WHERE S.faculty_id = :facultyId LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getByFacultyId(
+      facultyId: String,
+      offset: Int,
+      limit: Int
+  ): List<Subject>
 }

@@ -1,6 +1,6 @@
 package com.robiumautomations.polyhex.controllers
 
-import com.robiumautomations.polyhex.models.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.dtos.users.RegistrationUser
 import com.robiumautomations.polyhex.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus

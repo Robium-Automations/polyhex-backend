@@ -3,7 +3,7 @@ package com.robiumautomations.polyhex.services
 import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.models.User
 import com.robiumautomations.polyhex.models.UserCredentials
-import com.robiumautomations.polyhex.models.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.dtos.users.RegistrationUser
 import com.robiumautomations.polyhex.repos.UserCredentialsRepo
 import com.robiumautomations.polyhex.repos.UserRepo
 import com.robiumautomations.polyhex.security.AuthenticationUser
@@ -13,7 +13,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service

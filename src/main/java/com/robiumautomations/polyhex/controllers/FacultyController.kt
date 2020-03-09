@@ -1,9 +1,7 @@
 package com.robiumautomations.polyhex.controllers
 
 import com.robiumautomations.polyhex.enums.UserRole
-import com.robiumautomations.polyhex.models.dtos.faculties.CreateFacultyRequestDto
-import com.robiumautomations.polyhex.models.universityentities.Faculty
-import com.robiumautomations.polyhex.models.universityentities.University
+import com.robiumautomations.polyhex.dtos.faculties.CreateFacultyRequestDto
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.services.FacultyService
 import org.springframework.beans.factory.annotation.Autowired

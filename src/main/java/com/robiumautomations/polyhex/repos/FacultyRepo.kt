@@ -10,4 +10,10 @@ interface FacultyRepo : JpaRepository<Faculty, String> {
 
   @Query(value = "SELECT * FROM faculties F WHERE F.university_id = :universityId ;", nativeQuery = true)
   fun getByUniversityId(universityId: String): List<Faculty>
+
+  @Query(
+      value = "SELECT 1 FROM faculties F WHERE F.university_id = :universityId AND F.faculty_name = :facultyName ;",
+      nativeQuery = true
+  )
+  fun checkIfFacultyNameAvailable(universityId: String, facultyName: String): List<Int>
 }

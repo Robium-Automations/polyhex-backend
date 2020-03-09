@@ -1,6 +1,7 @@
 package com.robiumautomations.polyhex.controllers
 
 import com.robiumautomations.polyhex.enums.UserRole
+import com.robiumautomations.polyhex.models.dtos.faculties.CreateFacultyRequestDto
 import com.robiumautomations.polyhex.models.universityentities.Faculty
 import com.robiumautomations.polyhex.models.universityentities.University
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.lang.Exception
 
 @RestController
 class FacultyController {
@@ -22,19 +24,25 @@ class FacultyController {
       consumes = [MediaType.APPLICATION_JSON_VALUE],
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
-  fun createFaculty(@RequestBody faculty: Faculty): ResponseEntity<Any> {
+  fun createFaculty(@RequestBody faculty: CreateFacultyRequestDto): ResponseEntity<Any> {
     if (AuthenticationUtils.getCurrentUserRole() != UserRole.moderator) {
       return ResponseEntity(HttpStatus.FORBIDDEN)
     }
     if (faculty.facultyName.isNullOrBlank()) {
       return ResponseEntity(mapOf("Message" to "Specify 'facultyName' property."), HttpStatus.BAD_REQUEST)
     }
-    return ResponseEntity.ok(
-        facultyService.createFaculty(
-            faculty.facultyName,
-            AuthenticationUtils.getCurrentUserId()
-        )
-    )
+    return try {
+      ResponseEntity.ok(
+          facultyService.createFaculty(
+              faculty.facultyName,
+              AuthenticationUtils.getCurrentUserId()
+          )
+      )
+    } catch (e: Exception) {
+      e.printStackTrace()
+      ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
+    }
+
   }
 
   @GetMapping(

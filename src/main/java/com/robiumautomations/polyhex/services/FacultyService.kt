@@ -19,6 +19,10 @@ class FacultyService {
     val universityId = userService.getUserInfo(creatorId)?.universityId
         ?: throw Exception("No universityId for creator: $creatorId")
 
+    if (!isFacultyNameIsAvailable(universityId, facultyName)) {
+      throw Exception("There is faculty with such name at the university.")
+    }
+
     Faculty(
         facultyName = facultyName,
         universityId = universityId
@@ -26,6 +30,10 @@ class FacultyService {
       facultyRepo.save(it)
       return it
     }
+  }
+
+  private fun isFacultyNameIsAvailable(universityId: String, facultyName: String): Boolean {
+    return facultyRepo.checkIfFacultyNameAvailable(universityId, facultyName).isEmpty()
   }
 
   fun getByFacultiesByUniversityId(universityId: String): List<Faculty> {

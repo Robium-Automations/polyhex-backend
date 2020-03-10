@@ -23,6 +23,7 @@ public class FileController {
     @Autowired
     private StorageService storageService;
 
+    // hey, Guga
     // split into two: /users/{user_id}/files and /groups/{group_id}/files
     @GetMapping("/files")
     public String listAllFiles(Model model) {

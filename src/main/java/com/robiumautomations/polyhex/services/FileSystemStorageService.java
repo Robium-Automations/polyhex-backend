@@ -8,6 +8,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.robiumautomations.polyhex.models.materials.Material;
 import com.robiumautomations.polyhex.storage.FileNotFoundException;
 import com.robiumautomations.polyhex.storage.StorageException;
 import com.robiumautomations.polyhex.storage.StorageProperties;
@@ -43,7 +44,9 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public String store(MultipartFile file) {
+    public Material store(MultipartFile file) {
+
+        // generate storageId =  UUID.randomUUID().toString()
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
             if (file.isEmpty()) {

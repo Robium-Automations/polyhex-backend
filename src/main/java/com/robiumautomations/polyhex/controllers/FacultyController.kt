@@ -57,24 +57,19 @@ class FacultyController {
     }
 
     try {
-      offset!!.toInt()
+      offset.toInt()
     } catch (e: NumberFormatException) {
       return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
     }
     try {
-      limit!!.toInt()
+      limit.toInt()
     } catch (e: NumberFormatException) {
       return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
     }
-    return with(HttpHeaders()) {
-      add("offset", offset)
-      add("limit", limit)
-      ResponseEntity(
-          facultyService.getByFacultiesByUniversityId(universityId, offset.toInt(), limit.toInt()),
-          this,
-          HttpStatus.OK
-      )
-    }
+    return ResponseEntity.ok()
+        .header("offset", offset)
+        .header("limit", limit)
+        .body(facultyService.getByFacultiesByUniversityId(universityId, offset.toInt(), limit.toInt()))
   }
 
   @GetMapping(

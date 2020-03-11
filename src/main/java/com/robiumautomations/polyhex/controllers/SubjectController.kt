@@ -64,14 +64,9 @@ class SubjectController {
     } catch (e: NumberFormatException) {
       return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
     }
-    return with(HttpHeaders()) {
-      add("offset", offset)
-      add("limit", limit)
-      ResponseEntity(
-          subjectService.getSubjectsByFacultyId(facultyId, offset.toInt(), limit.toInt()),
-          this,
-          HttpStatus.OK
-      )
-    }
+    return ResponseEntity.ok()
+        .header("offset", offset)
+        .header("limit", limit)
+        .body(subjectService.getSubjectsByFacultyId(facultyId, offset.toInt(), limit.toInt()))
   }
 }

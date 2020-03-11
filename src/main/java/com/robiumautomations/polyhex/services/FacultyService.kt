@@ -25,12 +25,11 @@ class FacultyService {
       throw Exception("There is faculty with such name at the university.")
     }
 
-    Faculty(
+    return Faculty(
         facultyName = facultyName,
         universityId = universityId
     ).also {
       facultyRepo.save(it)
-      return it
     }
   }
 

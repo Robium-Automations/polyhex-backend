@@ -26,13 +26,12 @@ class SubjectService {
       throw Exception("There is subject with such name at the faculty.")
     }
 
-    Subject(
+    return Subject(
         subjectName = subjectName,
         subjectDescription = subjectDescription,
         facultyId = facultyId
     ).also {
       subjectRepo.save(it)
-      return it
     }
   }
 

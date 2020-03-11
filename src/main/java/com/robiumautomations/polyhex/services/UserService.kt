@@ -52,7 +52,7 @@ open class UserService : UserDetailsService {
       userCredentialsRepo.save(it)
     }
 
-    User(
+    return User(
         userId = userId,
         username = registrationUser.username!!,
         firstName = registrationUser.firstName,
@@ -60,7 +60,6 @@ open class UserService : UserDetailsService {
         birthday = registrationUser.birthday
     ).also {
       userRepo.save(it)
-      return it
     }
   }
 

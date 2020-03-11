@@ -17,6 +17,7 @@ public class SharedMaterial {
     @Column(name = "group_id")
     private String groupId;
 
+    public SharedMaterial(){}
     public SharedMaterial(String materialId, String groupId) {
         this.materialId=materialId;
         this.groupId=groupId;

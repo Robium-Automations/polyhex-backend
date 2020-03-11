@@ -26,9 +26,8 @@ public class Material {
     @Column(name = "creating_date")
     private String creatingDate;
 
-    //public Material(){}
-    public Material(String materialId, String path, String name,
-                           String DataType, String authorId, String creatingDate){
+    public Material(){}
+    public Material(String materialId, String path, String name, String DataType, String authorId, String creatingDate){
         this.materialId=materialId;
         this.path=path;
         this.name=name;
@@ -86,22 +85,8 @@ public class Material {
             this.creatingDate = creatingDate;
         }
 
-
-
 }
 
-
-
-  /**
-   * materialId
-   * path
-   * name
-   * dataType
-   * authorId
-   */
-
-
-  // see /obiumautomations/polyhex/models/User.kt
 
   // mandatory empty constructor
 

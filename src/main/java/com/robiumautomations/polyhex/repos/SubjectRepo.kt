@@ -23,4 +23,15 @@ interface SubjectRepo : JpaRepository<Subject, String> {
       offset: Int,
       limit: Int
   ): List<Subject>
+
+  /**
+   * Method is used to ensure that current [subjectId] exists and belongs to the user's [userId] university
+   * @return listOf(1) if everything is fine, otherwise emptyList()
+   */
+  @Query(
+      value = "SELECT 1 WHERE (SELECT F.university_id FROM subjects S JOIN faculties F ON S.faculty_id = F.faculty_id " +
+          "WHERE S.subject_id = :subjectId ) = (SELECT U.university_id FROM users U WHERE U.user_id = :userId );",
+      nativeQuery = true
+  )
+  fun checkIfSubjectBelongsToUserUniversity(subjectId: String, userId: String): List<Int>
 }

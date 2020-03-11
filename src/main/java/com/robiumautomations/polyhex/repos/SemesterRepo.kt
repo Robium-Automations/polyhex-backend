@@ -29,4 +29,15 @@ interface SemesterRepo : JpaRepository<Semester, String> {
       nativeQuery = true
   )
   fun getSemesterIdsByUniversityIdAndSemesterName(universityId: String, semesterName: String): List<String>
+
+  /**
+   * Method is used to ensure that current [semesterId] exists and belongs to the user's [userId] university
+   * @return listOf(1) if everything is fine, otherwise emptyList()
+   */
+  @Query(
+      value = "SELECT 1 FROM semesters S JOIN users U ON S.university_id = U.university_id " +
+          "WHERE S.semester_id = :semesterId AND U.user_id = :userId ;",
+      nativeQuery = true
+  )
+  fun checkIfSemesterBelongsToUserUniversity(semesterId: String, userId: String): List<Int>
 }

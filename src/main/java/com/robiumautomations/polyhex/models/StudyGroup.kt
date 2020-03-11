@@ -1,6 +1,7 @@
 package com.robiumautomations.polyhex.models
 
 import lombok.Data
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -12,7 +13,7 @@ import javax.persistence.Table
 class StudyGroup(
     @Id
     @Column(name = "study_group_id")
-    val studyGroupId: String?,
+    val studyGroupId: String? = UUID.randomUUID().toString(),
     @Column(name = "study_group_name")
     val studyGroupName: String?,
     @Column(name = "subject_id")

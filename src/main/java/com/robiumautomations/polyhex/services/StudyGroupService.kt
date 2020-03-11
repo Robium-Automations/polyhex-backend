@@ -1,10 +1,13 @@
 package com.robiumautomations.polyhex.services
 
+import com.robiumautomations.polyhex.enums.ManageGroupAction
 import com.robiumautomations.polyhex.models.StudyGroup
+import com.robiumautomations.polyhex.models.UserId
 import com.robiumautomations.polyhex.repos.SemesterRepo
 import com.robiumautomations.polyhex.repos.StudyGroupRepo
 import com.robiumautomations.polyhex.repos.SubjectRepo
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,6 +21,9 @@ class StudyGroupService {
 
   @Autowired
   private lateinit var subjectRepo: SubjectRepo
+
+  @Autowired
+  private lateinit var groupManagementService: GroupManagementService
 
   fun createGroup(
       groupName: String,
@@ -35,6 +41,26 @@ class StudyGroupService {
         semesterId = semesterId
     ).also {
       studyGroupRepo.save(it)
+    }
+  }
+
+  fun manageGroup(
+      action: ManageGroupAction,
+      groupId: String,
+      currentUserId: String,
+      users: List<UserId>
+  ) {
+    val studyGroup = studyGroupRepo.findGroupByGroupIdAndUsersUniversity(groupId, currentUserId)
+        ?: throw Exception("No group with id: $groupId.")
+
+    when (action) {
+      ManageGroupAction.join -> groupManagementService.joinGroup(groupId, currentUserId)
+
+      ManageGroupAction.leave -> groupManagementService.leaveGroup(groupId, currentUserId)
+
+      ManageGroupAction.add -> groupManagementService.addUsers(groupId, users)
+
+      ManageGroupAction.remove -> groupManagementService.removeUsers(groupId, users)
     }
   }
 

@@ -11,7 +11,7 @@ import javax.persistence.*
 class UserCredentials(
     @Id
     @Column(name = "user_id")
-    val userId: String? = UUID.randomUUID().toString(),
+    val userId: UserId? = UUID.randomUUID().toString(),
     @Column(name = "username")
     val username: String?,
     @Column(name = "email")

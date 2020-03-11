@@ -1,6 +1,8 @@
 package com.robiumautomations.polyhex.controllers
 
 import com.robiumautomations.polyhex.dtos.studygroups.CreateGroupRequestDto
+import com.robiumautomations.polyhex.dtos.studygroups.ManageGroupsRequestDto
+import com.robiumautomations.polyhex.enums.ManageGroupAction
 import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.services.StudyGroupService
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -45,6 +48,45 @@ class GroupController {
               creatorId = AuthenticationUtils.getCurrentUserId()
           )
       )
+    } catch (e: Exception) {
+      e.printStackTrace()
+      ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
+    }
+  }
+
+  @PostMapping(
+      "/groups/{groupId}",
+      consumes = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun manageGroup(
+      @PathVariable("groupId") groupId: String,
+      @RequestBody dto: ManageGroupsRequestDto
+  ): ResponseEntity<Any> {
+    if (groupId.isBlank()) {
+      return ResponseEntity(mapOf("Message" to "Specify 'groupId' property."), HttpStatus.BAD_REQUEST)
+    }
+    if (dto.action.isNullOrBlank()) {
+      return ResponseEntity(mapOf("Message" to "Specify 'action' property."), HttpStatus.BAD_REQUEST)
+    }
+    val action: ManageGroupAction
+    try {
+      action = ManageGroupAction.valueOf(dto.action)
+    } catch (e: IllegalArgumentException) {
+      return ResponseEntity(
+          mapOf("Message" to "Unknown action: '${dto.action}'. Possible actions: ${ManageGroupAction.values()}"),
+          HttpStatus.BAD_REQUEST
+      )
+    }
+    if (action in listOf(ManageGroupAction.add, ManageGroupAction.remove)
+        && AuthenticationUtils.getCurrentUserRole() != UserRole.moderator) {
+      return ResponseEntity(
+          mapOf("Message" to "Only moderator can add or remove users from groups. Fuck off."),
+          HttpStatus.FORBIDDEN
+      )
+    }
+    return try {
+      groupService.manageGroup(action, groupId, AuthenticationUtils.getCurrentUserId(), dto.users)
+      ResponseEntity.ok().build()
     } catch (e: Exception) {
       e.printStackTrace()
       ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)

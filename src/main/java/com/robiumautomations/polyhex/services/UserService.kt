@@ -4,6 +4,7 @@ import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.models.User
 import com.robiumautomations.polyhex.models.UserCredentials
 import com.robiumautomations.polyhex.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.models.UserId
 import com.robiumautomations.polyhex.repos.UserCredentialsRepo
 import com.robiumautomations.polyhex.repos.UserRepo
 import com.robiumautomations.polyhex.security.AuthenticationUser
@@ -35,7 +36,7 @@ open class UserService : UserDetailsService {
     }
   }
 
-  fun getUserInfo(userId: String): User? {
+  fun getUserInfo(userId: UserId): User? {
     return userRepo.findByIdOrNull(userId)
   }
 

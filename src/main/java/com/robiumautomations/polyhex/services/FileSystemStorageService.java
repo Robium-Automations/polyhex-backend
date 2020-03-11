@@ -1,5 +1,8 @@
 package com.robiumautomations.polyhex.services;
 
+import com.robiumautomations.polyhex.storage.FileNotFoundException;
+import com.robiumautomations.polyhex.storage.StorageException;
+import com.robiumautomations.polyhex.storage.StorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -7,11 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.robiumautomations.polyhex.models.materials.Material;
-import com.robiumautomations.polyhex.storage.FileNotFoundException;
-import com.robiumautomations.polyhex.storage.StorageException;
-import com.robiumautomations.polyhex.storage.StorageProperties;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -44,9 +42,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Material store(MultipartFile file) {
-
-        // generate storageId =  UUID.randomUUID().toString()
+    public String store(MultipartFile file) {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
             if (file.isEmpty()) {

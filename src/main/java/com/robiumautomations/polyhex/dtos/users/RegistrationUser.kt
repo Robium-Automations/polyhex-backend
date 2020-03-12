@@ -1,4 +1,4 @@
-package com.robiumautomations.polyhex.models.dtos.users
+package com.robiumautomations.polyhex.dtos.users
 
 import java.util.*
 

@@ -15,4 +15,13 @@ class UniversityService {
     return universityRepo.getUserUniversity(userId)
   }
 
+  fun getUniversities(
+      query: String? = null,
+      offset: Int = 0,
+      limit: Int = 10
+  ): List<University> {
+    return query?.let {
+      universityRepo.getUniversities("%$it%", offset, limit)
+    } ?: universityRepo.getUniversities(offset, limit)
+  }
 }

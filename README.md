@@ -520,8 +520,6 @@ HTTP/1.1 200 OK
 
 Description: get subjects of particular faculty
 
-Description: create new subject
-
 Requires: 
 - auth token
 
@@ -560,4 +558,77 @@ limit: 5
         "facultyId": "faculty_id"
     }
 ]
+```
+
+## GET /universities
+
+Description: get university list in alphabetical order.
+
+Requires: nothing
+
+Returns:
+- 200 if everything is fine and university list
+
+Parameters: 
+- **name**: optional, part of university name, used as a search term
+- **offset**: optional, default=0
+- **limit**: optional, default=10
+
+**Request example**
+```
+GET /universities?offset=10&limit=5 HTTP/1.1
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+offset: 10
+limit: 5
+
+[
+    {
+        "universityId": "university_id1",
+        "universityName": "TU Chemnitz"
+    },
+    {
+        "universityId": "university_id2",
+        "universityName": "TU Dresden"
+    },
+    {
+        "universityId": "university_id1",
+        "universityName": "TU Leipzig"
+    }
+]
+```
+
+
+## PUT /universities/{universityId}
+
+Description: manage university - join university.
+
+Requires: 
+- token
+
+Returns:
+- 200 if everything is fine
+- 400 if case of error and description
+
+Parameters:
+- **universityId**: mandatory
+- **action**: mandatory, one of the following - join
+
+**Request example**
+```
+PUT /universities/university_id HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer long_token_should_be_here
+
+{
+    "action": "join"
+}
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
 ```

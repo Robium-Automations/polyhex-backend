@@ -123,7 +123,7 @@ HTTP/1.1 409 CONFLICT
 Parameter:
 - **email**: mandatory.
 
-Description: check if email is availabale.
+Description: check if email is available.
 Returns: 204 (NO_CONTENT) if available, otherwise 409 (CONFLICT)
 
 **Request example**
@@ -133,5 +133,106 @@ HEAD /emails/email@mail.com HTTP/1.1
 
 **Response example**
 ```
-HTTP/1.1 240 NO_CONTENT
+HTTP/1.1 204 NO_CONTENT
+```
+
+## POST /faculties
+
+Description: create new faculty.
+Requires: moderator role
+
+Parameter: 
+- **facultyName**: mandatory.
+
+Returns:
+- 200 if everything is fine
+- 403 if user is not moderator
+- 400 if something else is wrong, with message error
+
+**Request example**
+```
+POST /faculties HTTP/1.1
+
+{
+    "facultyName": "New Faculty"
+}
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+{
+    "facultyId": uuid,
+    "facultyName": "New Faculty",
+    "universityId": uuid (user's universityId)
+}
+```
+
+## GET /universities/{universityId}/faculties
+
+Description: returns faculty list of the given university in alphabetical order
+Returns:
+- 200 and list of faculties
+
+Parameters: 
+- **universityId**: mandatory.
+- **offset**: optional, default=0
+- **limit**: optional, default=10
+
+**Request example**
+```
+GET /universities/university_uuid/faculties?offet=5&limit=10 HTTP/1.1
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+offset: 5
+limit: 3
+
+[
+    {
+        "facultyId": uuid1,
+         "facultyName": "faculty name 1",
+         "universityId": university_uuid
+    },
+    {
+        "facultyId": uuid2,
+         "facultyName": "faculty name 2",
+         "universityId": university_uuid
+    },
+    {
+        "facultyId": uuid3,
+         "facultyName": "faculty name 3",
+         "universityId": university_uuid
+    }
+]
+```
+
+
+
+## GET /faculties/{facultyId}
+Description: returns faculty
+Returns:
+- 200 and faculties
+- 204 if not found
+
+Parameters: 
+- **facultyId**: mandatory
+
+**Request example**
+```
+GET /faculties/faculty_uuid HTTP/1.1
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+{
+    "facultyId": uuid1,
+    "facultyName": "faculty name",
+    "universityId": university_uuid
+}
 ```

@@ -473,4 +473,91 @@ HTTP/1.1 200 OK
     "universityId": "university_id"
 }
 ```
+## POST /subjects
 
+Description: create new subject
+
+Requires: 
+- moderator role
+- token
+
+Returns:
+- 200 if everything is fine and subject object
+- 403 if not moderator
+- 400 if not enough info
+
+Parameters: 
+- **subjectName**: mandatory, string
+- **subjectDescription**: optional, string
+- **facultyId**: mandatory, id of the faculty, to which subject should belong
+
+**Request example**
+```
+POST /subjects HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer long_token_should_be_here
+
+{
+    "subjectName": "SITMA",
+    "subjectDescription": "Business stuff bla-bla-bla...",
+    "facultyId": "faculty_id"
+}
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+{
+    "subjectId": "subject_id",
+    "subjectName": "SITMA",
+    "subjectDescription": "Business stuff bla-bla-bla...",
+    "facultyId": "faculty_id"
+}
+```
+
+## GET /faculties/{facultyId}/subjects
+
+Description: get subjects of particular faculty
+
+Description: create new subject
+
+Requires: 
+- auth token
+
+Returns:
+- 200 if everything is fine and subject list
+- 400 if something wrong and error description
+
+Parameters: 
+- **facultyId**: mandatory, string
+- **offset**: optional, default=0
+- **limit**: optional, default=10
+
+**Request example**
+```
+GET /faculties/faculty_id/subjects?offset=10&limit=5 HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+offset: 10
+limit: 5
+
+[
+    {
+        "subjectId": "subject_id1",
+        "subjectName": "SITMA",
+        "subjectDescription": "Business stuff bla-bla-bla...",
+        "facultyId": "faculty_id"
+    },
+    {
+        "subjectId": "subject_id2",
+        "subjectName": "SSE",
+        "subjectDescription": "Services stuff bla-bla-bla...",
+        "facultyId": "faculty_id"
+    }
+]
+```

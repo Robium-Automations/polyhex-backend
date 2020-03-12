@@ -3,7 +3,6 @@ package com.robiumautomations.polyhex.repos
 import com.robiumautomations.polyhex.models.UserId
 import com.robiumautomations.polyhex.models.UsersGroups
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
@@ -15,11 +14,4 @@ interface UsersGroupsRepo : JpaRepository<UsersGroups, String> {
       nativeQuery = true
   )
   fun getByUserIdAndGroupId(groupId: String, userId: UserId): UsersGroups?
-
-  @Modifying
-  @Query(
-      value = "DELETE FROM users_groups UG WHERE UG.study_group_id = :groupId AND UG.user_id IN :userIds ;",
-      nativeQuery = true
-  )
-  fun deleteByGroupIdAndUserIds(groupId: String, userIds: List<UserId>)
 }

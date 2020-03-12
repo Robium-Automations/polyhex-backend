@@ -4,5 +4,5 @@ import com.robiumautomations.polyhex.models.UserId
 
 class ManageGroupsRequestDto(
     val action: String? = null,
-    val users: List<UserId> = emptyList()
+    val userId: UserId? = null
 )

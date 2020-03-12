@@ -7,7 +7,6 @@ import com.robiumautomations.polyhex.repos.SemesterRepo
 import com.robiumautomations.polyhex.repos.StudyGroupRepo
 import com.robiumautomations.polyhex.repos.SubjectRepo
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -48,9 +47,9 @@ class StudyGroupService {
       action: ManageGroupAction,
       groupId: String,
       currentUserId: String,
-      users: List<UserId>
+      userId: UserId? = null
   ) {
-    val studyGroup = studyGroupRepo.findGroupByGroupIdAndUsersUniversity(groupId, currentUserId)
+    studyGroupRepo.findGroupByGroupIdAndUsersUniversity(groupId, currentUserId)
         ?: throw Exception("No group with id: $groupId.")
 
     when (action) {
@@ -58,9 +57,10 @@ class StudyGroupService {
 
       ManageGroupAction.leave -> groupManagementService.leaveGroup(groupId, currentUserId)
 
-      ManageGroupAction.add -> groupManagementService.addUsers(groupId, users)
-
-      ManageGroupAction.remove -> groupManagementService.removeUsers(groupId, users)
+      ManageGroupAction.remove -> {
+        userId?.let { groupManagementService.removeUser(groupId, it) }
+            ?: throw Exception("Property 'userId' is not specified. Dude, I don't know whom I should delete.")
+      }
     }
   }
 

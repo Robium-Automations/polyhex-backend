@@ -12,7 +12,7 @@ class GroupManagementService {
   @Autowired
   private lateinit var usersGroupsRepo: UsersGroupsRepo
 
-  fun joinGroup(groupId: String, currentUserId: String) {
+  fun joinGroup(groupId: String, currentUserId: UserId) {
     val usersGroups = usersGroupsRepo.getByUserIdAndGroupId(groupId, currentUserId)
     if (usersGroups != null) {
       throw Exception("User: $currentUserId is already member of the group: $groupId.")
@@ -31,19 +31,9 @@ class GroupManagementService {
     usersGroupsRepo.deleteById(usersGroups.id)
   }
 
-  fun addUsers(groupId: String, users: List<UserId>) {
-    /**
-     * TODO
-     * 1. get only those users ids, who are belongs to the current university
-     * 2. add them to the group
-     */
-  }
-
-  fun removeUsers(groupId: String, users: List<UserId>) {
-    /**
-     * TODO
-     * 1. get only those users ids, who are belongs to the current group
-     * 2. remove them to the group
-     */
+  fun removeUser(groupId: String, userId: UserId) {
+    usersGroupsRepo.getByUserIdAndGroupId(groupId, userId)?.let {
+      usersGroupsRepo.deleteById(it.id)
+    } ?: throw Exception("There is no user: $userId in the group: $groupId.")
   }
 }

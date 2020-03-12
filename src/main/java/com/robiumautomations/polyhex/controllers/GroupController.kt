@@ -77,15 +77,15 @@ class GroupController {
           HttpStatus.BAD_REQUEST
       )
     }
-    if (action in listOf(ManageGroupAction.add, ManageGroupAction.remove)
+    if (action == ManageGroupAction.remove
         && AuthenticationUtils.getCurrentUserRole() != UserRole.moderator) {
       return ResponseEntity(
-          mapOf("Message" to "Only moderator can add or remove users from groups. Fuck off."),
+          mapOf("Message" to "Only moderator can remove users from groups. Fuck off."),
           HttpStatus.FORBIDDEN
       )
     }
     return try {
-      groupService.manageGroup(action, groupId, AuthenticationUtils.getCurrentUserId(), dto.users)
+      groupService.manageGroup(action, groupId, AuthenticationUtils.getCurrentUserId(), dto.userId)
       ResponseEntity.ok().build()
     } catch (e: Exception) {
       e.printStackTrace()

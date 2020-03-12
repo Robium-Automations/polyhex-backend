@@ -15,6 +15,7 @@ Response: returns 200 if username and password are correct, and Authorization he
 **Request example**
 ```
 POST /signin HTTP/1.1
+Content-Type: application/json
 
 {
   "username": "admin",
@@ -78,6 +79,7 @@ Username rules:
 **Request example**
 ```
 POST /users HTTP/1.1
+Content-Type: application/json
 
 {
   "username": "newUser",
@@ -139,7 +141,10 @@ HTTP/1.1 204 NO_CONTENT
 ## POST /faculties
 
 Description: create new faculty.
-Requires: moderator role
+
+Requires: 
+- moderator role
+- token
 
 Parameter: 
 - **facultyName**: mandatory.
@@ -152,9 +157,131 @@ Returns:
 **Request example**
 ```
 POST /faculties HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer long_token_should_be_here
 
 {
     "facultyName": "New Faculty"
+}
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+{
+    "facultyId": "uuid",
+    "facultyName": "New Faculty",
+    "universityId": "uuid" (user's universityId)
+}
+```
+
+## GET /universities/{universityId}/faculties
+
+Description: returns faculty list of the given university in alphabetical order
+
+Requires:
+- token
+
+Returns:
+- 200 and list of faculties
+
+Parameters: 
+- **universityId**: mandatory.
+- **offset**: optional, default=0
+- **limit**: optional, default=10
+
+**Request example**
+```
+GET /universities/university_uuid/faculties?offet=5&limit=10 HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+offset: 5
+limit: 3
+
+[
+    {
+        "facultyId": "uuid1",
+         "facultyName": "faculty name 1",
+         "universityId": "university_uuid"
+    },
+    {
+        "facultyId": "uuid2",
+         "facultyName": "faculty name 2",
+         "universityId": "university_uuid"
+    },
+    {
+        "facultyId": "uuid3",
+         "facultyName": "faculty name 3",
+         "universityId": "university_uuid"
+    }
+]
+```
+
+
+
+## GET /faculties/{facultyId}
+
+Description: returns faculty
+
+Requires:
+- token
+
+Returns:
+- 200 and faculties
+- 204 if not found
+
+Parameters: 
+- **facultyId**: mandatory
+
+**Request example**
+```
+GET /faculties/faculty_uuid HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+{
+    "facultyId": uuid1",
+    "facultyName": "faculty name",
+    "universityId": "university_uuid"
+}
+```
+
+## POST /groups
+
+Description: create new group
+
+Requires: 
+- moderator role
+- token
+
+Returns:
+- 200 if everything is fine and group object
+- 403 if not moderator
+
+Parameters: 
+- **groupName**: mandatory, string
+- **subjectId**: mandatory, subject uuid
+- **semesterId**: mandatory, semester uuid
+
+**Request example**
+```
+POST /groups HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer long_token_should_be_here
+
+{
+    "groupName": "New Faculty",
+    "subjectId": "New Faculty",
+    "semesterId": "New Faculty"
 }
 ```
 
@@ -169,70 +296,45 @@ HTTP/1.1 200 OK
 }
 ```
 
-## GET /universities/{universityId}/faculties
+## PUT /groups/{groupId}
 
-Description: returns faculty list of the given university in alphabetical order
+Description: manage group - join or leave a group, moderators can also remove other users from the group
+
+Requires: 
+- token
+
 Returns:
-- 200 and list of faculties
+- 200 if everything is fine and group object
+- 403 if not moderator(if removing other users)
+- 400 if not enough info
 
-Parameters: 
-- **universityId**: mandatory.
-- **offset**: optional, default=0
-- **limit**: optional, default=10
+Parameters:
+- **action**: mandatory, one of the following - join, leave, remove
+- **userId**: mandatory if action=remove, otherwise not
 
 **Request example**
 ```
-GET /universities/university_uuid/faculties?offet=5&limit=10 HTTP/1.1
-```
-
-**Response example**
-```
-HTTP/1.1 200 OK
-offset: 5
-limit: 3
-
-[
-    {
-        "facultyId": uuid1,
-         "facultyName": "faculty name 1",
-         "universityId": university_uuid
-    },
-    {
-        "facultyId": uuid2,
-         "facultyName": "faculty name 2",
-         "universityId": university_uuid
-    },
-    {
-        "facultyId": uuid3,
-         "facultyName": "faculty name 3",
-         "universityId": university_uuid
-    }
-]
-```
-
-
-
-## GET /faculties/{facultyId}
-Description: returns faculty
-Returns:
-- 200 and faculties
-- 204 if not found
-
-Parameters: 
-- **facultyId**: mandatory
-
-**Request example**
-```
-GET /faculties/faculty_uuid HTTP/1.1
-```
-
-**Response example**
-```
-HTTP/1.1 200 OK
+PUT /groups/group_id HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer long_token_should_be_here
 
 {
-    "facultyId": uuid1,
-    "facultyName": "faculty name",
-    "universityId": university_uuid
+    "action": "join"
 }
 ```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+```
+
+## POST /semesters
+## GET /universities/{universityId}/semesters
+## PUT /semesters/{semesterId}
+
+## POST /subjects
+## POST /faculties/{facultyId}/subjects
+
+## POST /universities
+## POST /universities/{universityId}
+## POST /subjects

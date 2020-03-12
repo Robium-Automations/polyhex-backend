@@ -329,12 +329,148 @@ HTTP/1.1 200 OK
 ```
 
 ## POST /semesters
+
+Description: create new semester
+
+Requires: 
+- moderator role
+- token
+
+Returns:
+- 200 if everything is fine and semester object
+- 403 if not moderator
+- 400 if not enough info
+
+Parameters: 
+- **semesterName**: mandatory, string
+- **semesterDescription**: optional, string
+- **startDate**: optional, epoch timestamp in milliseconds. For example 22.03.1997 17:05 GMT = 1584896700000
+- **endDate**: optional, epoch timestamp in milliseconds. For example 22.03.1997 17:05 GMT = 1584896700000
+
+**Request example**
+```
+POST /semesters HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer long_token_should_be_here
+
+{
+    "semesterName": "WS 2019/2020",
+    "semesterDescription": "Here should be a description."
+}
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+{
+    "semesterId": "semester_id",
+    "semesterName": "WS 2019/2020",
+    "semesterDescription": "Here should be a description.",
+    "startDate": null
+    "endDate": null
+    "universityId": "university_id"
+}
+```
+
 ## GET /universities/{universityId}/semesters
+
+Description: get semesters
+
+Requires: 
+- token
+
+Returns:
+- 200 and list of semester objects, of emptyList
+- 200 and empty list if universityId is incorrect
+
+Parameters: 
+- **universityId**: mandatory.
+- **offset**: optional, default=0
+- **limit**: optional, default=10
+
+**Request example**
+```
+GET /universities/university_uuid/semesters HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+offset: 0
+limit: 10
+
+[
+    {
+        "semesterId": "semester_id1",
+        "semesterName": "WS 2019/2020",
+        "semesterDescription": "Here should be a description.",
+        "startDate": null
+        "endDate": null
+        "universityId": "university_id"
+    },
+    {
+        "semesterId": "semester_id2",
+        "semesterName": "SS 2019",
+        "semesterDescription": "Another description.",
+        "startDate": null
+        "endDate": null
+        "universityId": "university_id"
+    },
+    {
+        "semesterId": "semester_id3",
+        "semesterName": "SS 2020",
+        "semesterDescription": null,
+        "startDate": null
+        "endDate": null
+        "universityId": "university_id"
+    },    
+]
+```
+
 ## PUT /semesters/{semesterId}
 
-## POST /subjects
-## POST /faculties/{facultyId}/subjects
+Description: update semester info. There should be sent the whole object (without id), if some parameters are not set, they become null.
 
-## POST /universities
-## POST /universities/{universityId}
-## POST /subjects
+Requires: 
+- moderator role
+- token
+
+Returns:
+- 200 if everything is fine and semester object
+- 403 if not moderator
+- 400 if shit occurs
+
+Parameters: 
+- **semesterName**: mandatory, string
+- **semesterDescription**: optional, string
+- **startDate**: optional, epoch timestamp in milliseconds. For example 22.03.1997 17:05 GMT = 1584896700000
+- **endDate**: optional, epoch timestamp in milliseconds. For example 22.03.1997 17:05 GMT = 1584896700000
+
+**Request example**
+```
+PUT /semesters/semester_id HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer long_token_should_be_here
+
+{
+    "semesterName": "WS 2020/2021",
+    "semesterDescription": "Awesome description."
+}
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+{
+    "semesterId": "semester_id",
+    "semesterName": "WS 2020/2021",
+    "semesterDescription": "Awesome description."
+    "startDate": null
+    "endDate": null
+    "universityId": "university_id"
+}
+```
+

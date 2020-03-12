@@ -25,7 +25,7 @@ class User(
     @Column(name = "bday")
     val birthday: Date?,
     @Column(name = "university_id")
-    val universityId: String?
+    var universityId: String?
 ) {
 
   constructor(

@@ -60,7 +60,7 @@ open class UserService : UserDetailsService {
         lastName = registrationUser.lastName,
         birthday = registrationUser.birthday
     ).also {
-      userRepo.save(it)
+      save(it)
     }
   }
 
@@ -94,5 +94,9 @@ open class UserService : UserDetailsService {
 
   private fun isValidUsername(username: String): Boolean {
     return """^(?=.{8,20}${'$'})(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])${'$'}""".toRegex().matches(username)
+  }
+
+  fun save(user: User) {
+    userRepo.save(user)
   }
 }

@@ -14,6 +14,9 @@ class SubjectService {
   @Autowired
   private lateinit var facultyService: FacultyService
 
+  @Autowired
+  private lateinit var userService: UserService
+
   fun createSubject(
       subjectName: String,
       subjectDescription: String? = null,
@@ -40,10 +43,35 @@ class SubjectService {
   }
 
   fun getSubjectsByFacultyId(
+      userId: String,
+      subjectQuery: String?,
       facultyId: String,
       offset: Int = 0,
       limit: Int = 10
   ): List<Subject> {
-    return subjectRepo.getByFacultyId(facultyId, offset, limit)
+    val user = userService.getUserInfo(userId) ?: throw Exception("No user with id: $userId found.")
+    val universityId = user.universityId ?: throw Exception("User: $userId does not belongs to a university.")
+
+    return if (subjectQuery == null) {
+      subjectRepo.getSubjectsByFacultyId(facultyId, universityId, offset, limit)
+    } else {
+      subjectRepo.getSubjectsByFacultyId("%$subjectQuery%", facultyId, universityId, offset, limit)
+    }
+  }
+
+  fun getSubjectsByUniversity(
+      userId: String,
+      subjectQuery: String?,
+      offset: Int = 0,
+      limit: Int = 10
+  ): List<Subject> {
+    val user = userService.getUserInfo(userId) ?: throw Exception("No user with id: $userId found.")
+    val universityId = user.universityId ?: throw Exception("User: $userId does not belongs to a university.")
+
+    return if (subjectQuery == null) {
+      subjectRepo.getSubjects(universityId, offset, limit)
+    } else {
+      subjectRepo.getSubjects("%$subjectQuery%", universityId, offset, limit)
+    }
   }
 }

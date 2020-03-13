@@ -14,16 +14,6 @@ interface SubjectRepo : JpaRepository<Subject, String> {
   )
   fun checkIfSubjectNameAvailable(facultyId: String, subjectName: String): List<Int>
 
-  @Query(
-      value = "SELECT * FROM subjects S WHERE S.faculty_id = :facultyId ORDER BY S.subject_name LIMIT :limit OFFSET :offset ;",
-      nativeQuery = true
-  )
-  fun getByFacultyId(
-      facultyId: String,
-      offset: Int,
-      limit: Int
-  ): List<Subject>
-
   /**
    * Method is used to ensure that current [subjectId] exists and belongs to the user's [userId] university
    * @return listOf(1) if everything is fine, otherwise emptyList()
@@ -34,4 +24,43 @@ interface SubjectRepo : JpaRepository<Subject, String> {
       nativeQuery = true
   )
   fun checkIfSubjectBelongsToUserUniversity(subjectId: String, userId: String): List<Int>
+
+  @Query(
+      value = "SELECT * FROM subjects S RIGHT JOIN faculties F ON S.faculty_id = F.faculty_id WHERE F.faculty_id = :facultyId " +
+          "AND F.university_id = :universityId ORDER BY S.subject_name LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getSubjectsByFacultyId(
+      facultyId: String,
+      universityId: String,
+      offset: Int,
+      limit: Int
+  ): List<Subject>
+
+  @Query(
+      value = "SELECT * FROM subjects S RIGHT JOIN faculties F ON S.faculty_id = F.faculty_id WHERE F.faculty_id = :facultyId " +
+          "AND F.university_id = :universityId AND S.subject_name ILIKE :subjectQuery ORDER BY S.subject_name LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getSubjectsByFacultyId(
+      subjectQuery: String,
+      facultyId: String,
+      universityId: String,
+      offset: Int,
+      limit: Int
+  ): List<Subject>
+
+  @Query(
+      value = "SELECT * FROM subjects S JOIN faculties F ON S.faculty_id = F.faculty_id " +
+          "WHERE F.university_id = :universityId ORDER BY S.subject_name LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getSubjects(universityId: String, offset: Int, limit: Int): List<Subject>
+
+  @Query(
+      value = "SELECT * FROM subjects S JOIN faculties F ON S.faculty_id = F.faculty_id WHERE F.university_id = :universityId " +
+          "AND S.subject_name ILIKE :subjectQuery ORDER BY S.subject_name LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getSubjects(subjectQuery: String, universityId: String, offset: Int, limit: Int): List<Subject>
 }

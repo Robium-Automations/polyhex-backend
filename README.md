@@ -529,6 +529,7 @@ Returns:
 
 Parameters: 
 - **facultyId**: mandatory, string
+- **subject**: optional, string, subject name to search
 - **offset**: optional, default=0
 - **limit**: optional, default=10
 
@@ -551,6 +552,44 @@ limit: 5
         "subjectDescription": "Business stuff bla-bla-bla...",
         "facultyId": "faculty_id"
     },
+    {
+        "subjectId": "subject_id2",
+        "subjectName": "SSE",
+        "subjectDescription": "Services stuff bla-bla-bla...",
+        "facultyId": "faculty_id"
+    }
+]
+```
+
+## GET /subjects
+
+Description: get subjects of the user's university
+
+Requires: 
+- auth token
+
+Returns:
+- 200 if everything is fine and subject list
+- 400 if something wrong and error description
+
+Parameters: 
+- **subject**: optional, string, subject name to search
+- **offset**: optional, default=0
+- **limit**: optional, default=10
+
+**Request example**
+```
+GET /subjects?offset=10&limit=5?subject=SSE HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+offset: 10
+limit: 5
+
+[
     {
         "subjectId": "subject_id2",
         "subjectName": "SSE",

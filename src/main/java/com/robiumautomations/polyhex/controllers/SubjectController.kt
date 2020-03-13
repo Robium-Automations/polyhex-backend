@@ -46,8 +46,9 @@ class SubjectController {
       "/faculties/{facultyId}/subjects",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
-  fun getUniversityFaculties(
+  fun getFacultySubjects(
       @PathVariable("facultyId") facultyId: String,
+      @RequestParam("subject", required = false, defaultValue = "") subjectQuery: String,
       @RequestParam("offset", required = false, defaultValue = "0") offset: String,
       @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
@@ -67,6 +68,47 @@ class SubjectController {
     return ResponseEntity.ok()
         .header("offset", offset)
         .header("limit", limit)
-        .body(subjectService.getSubjectsByFacultyId(facultyId, offset.toInt(), limit.toInt()))
+        .body(subjectService.getSubjectsByFacultyId(
+            AuthenticationUtils.getCurrentUserId(),
+            if (subjectQuery.isBlank()) null else subjectQuery,
+            facultyId,
+            offset.toInt(),
+            limit.toInt()
+        ))
+  }
+
+  @GetMapping(
+      "/subjects",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getUniversitySubjects(
+      @RequestParam("subject", required = false, defaultValue = "") subjectQuery: String,
+      @RequestParam("offset", required = false, defaultValue = "0") offset: String,
+      @RequestParam("limit", required = false, defaultValue = "10") limit: String
+  ): ResponseEntity<Any> {
+    try {
+      offset.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    try {
+      limit.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    return try {
+      ResponseEntity.ok()
+          .header("offset", offset)
+          .header("limit", limit)
+          .body(subjectService.getSubjectsByUniversity(
+              AuthenticationUtils.getCurrentUserId(),
+              if (subjectQuery.isBlank()) null else subjectQuery,
+              offset.toInt(),
+              limit.toInt())
+          )
+    } catch (e: Exception) {
+      e.printStackTrace()
+      ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
+    }
   }
 }

@@ -17,7 +17,7 @@ public class FileController {
   @Autowired private MaterialService materialService;
 
   // 1. uploadFile DONE
-  // 2. uploadFile (for groups)
+  // 2. uploadFile (for groups) DONE
   // 3. getUserFiles DONE
   // 4. getGroupFiles
   // 5. downloadFile
@@ -28,6 +28,28 @@ public class FileController {
     try {
       final Material material =
           materialService.createMaterial(file, AuthenticationUtils.INSTANCE.getCurrentUserId());
+      return ResponseEntity.ok(
+          new CreateFileResponseDto(
+              material.getMaterialId(),
+              material.getName(),
+              material.getDataType(),
+              file.getSize(),
+              material.getAuthorId(),
+              material.getCreatingDate().getTime()));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.badRequest().header("Message", e.getMessage()).build();
+    }
+  }
+
+  @PostMapping(value = "/groups/{group_id}/files", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public ResponseEntity uploadFileForGroup(
+      @PathVariable("group_id") String groupId, @RequestParam("file") MultipartFile file) {
+    try {
+      final Material material =
+          materialService.createMaterialForGroup(
+              file, AuthenticationUtils.INSTANCE.getCurrentUserId(), groupId);
       return ResponseEntity.ok(
           new CreateFileResponseDto(
               material.getMaterialId(),

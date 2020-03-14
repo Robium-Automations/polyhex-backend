@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.robiumautomations.polyhex.models.dtos.files.CreateFileResponseDto;
 import com.robiumautomations.polyhex.models.materials.Material;
+import com.robiumautomations.polyhex.models.materials.SharedMaterial;
 import com.robiumautomations.polyhex.repos.MaterialRepo;
+import com.robiumautomations.polyhex.repos.ShareMaterialRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ public class MaterialService {
   @Autowired private StorageService storageService;
 
   @Autowired private MaterialRepo materialRepo;
+  @Autowired private ShareMaterialRepo shareMaterialRepo;
 
   public Material createMaterial(final MultipartFile file, final String creatorId)
       throws Exception {
@@ -49,5 +52,14 @@ public class MaterialService {
               material.getCreatingDate().getTime()));
     }
     return result;
+  }
+
+  public Material createMaterialForGroup(
+      final MultipartFile file, final String currentUserId, final String groupId) throws Exception {
+    // check if user is member of the group
+    final Material material = createMaterial(file, currentUserId);
+    final SharedMaterial newSharedMaterial = new SharedMaterial(material.getMaterialId(), groupId);
+    shareMaterialRepo.save(newSharedMaterial);
+    return material;
   }
 }

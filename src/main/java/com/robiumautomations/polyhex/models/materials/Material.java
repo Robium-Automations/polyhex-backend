@@ -1,9 +1,6 @@
 package com.robiumautomations.polyhex.models.materials;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
 
@@ -13,6 +10,7 @@ import lombok.Data;
 public class Material {
 
     @Id
+    @GeneratedValue
     @Column(name = "material_id")
     private String materialId;
     @Column(name = "path")

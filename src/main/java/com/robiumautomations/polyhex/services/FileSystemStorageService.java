@@ -1,5 +1,7 @@
 package com.robiumautomations.polyhex.services;
 
+import com.robiumautomations.polyhex.repos.MaterialRepo;
+import com.robiumautomations.polyhex.repos.ShareMaterialRepo;
 import com.robiumautomations.polyhex.storage.FileNotFoundException;
 import com.robiumautomations.polyhex.storage.StorageException;
 import com.robiumautomations.polyhex.storage.StorageProperties;
@@ -22,7 +24,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
 @Service
-public class FileSystemStorageService implements StorageService {
+public class FileSystemStorageService implements IStorageService {
 
     private final Path rootLocation;
 

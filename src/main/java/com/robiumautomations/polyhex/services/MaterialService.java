@@ -71,12 +71,13 @@ public class MaterialService {
           materialRepo.getGroupFilesForUser(groupId, userId));
     } else {
       return fromMaterialsListToMaterialsDtoList(
-          materialRepo.getGroupFilesForUser(groupId, userId, fileNameQuery));
+          materialRepo.getGroupFilesForUser(userId, groupId, fileNameQuery));
     }
   }
 
   public Resource getFile(String fileId, String currentUserId) {
     // TODO: check if user can access to the file (TARAS)
     storageService.load(fileId);
+    return null;
   }
 }

@@ -26,7 +26,7 @@ interface MaterialRepo : JpaRepository<Material, String> {
           "(select UG.study_group_id from users_groups UG where UG.user_id = :userId and UG.study_group_id = :groupId ) ORDER BY M.creating_date ;",
       nativeQuery = true
   )
-  fun getGroupFilesForUser(userId: String, groupId: String): List<Material>
+  fun getGroupFilesForUser(groupId: String, userId: String): List<Material>
 
   @Query(
       value = "select M.* from materials M join shared_materials SM on M.material_id = SM.material_id where M.name ilike :fileNameQuery and SM.group_id = " +

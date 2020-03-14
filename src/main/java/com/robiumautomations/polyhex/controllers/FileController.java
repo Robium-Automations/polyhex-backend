@@ -98,7 +98,8 @@ public class FileController {
   @ResponseBody
   public ResponseEntity downloadFile(@PathVariable("fileId") String fileId) {
     final Resource resource =
-        materialService.getFile(fileId, AuthenticationUtils.INSTANCE.getCurrentUserId());
+        materialService.
+            getFile(fileId, AuthenticationUtils.INSTANCE.getCurrentUserId());
 
     return ResponseEntity.ok()
         .header(
@@ -106,4 +107,8 @@ public class FileController {
             "attachment; filename=\"" + resource.getFilename() + "\"")
         .body(resource);
   }
+
+  // afterall:
+  // delete from shared_materials;
+  // delete from materials;
 }

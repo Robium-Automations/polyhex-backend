@@ -1,6 +1,7 @@
 package com.robiumautomations.polyhex.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,13 @@ public class FileController {
 
   @Autowired private MaterialService materialService;
 
-  // 1. uploadFile
+  // 1. uploadFile DONE
   // 2. uploadFile (for groups)
-  // 3. getUserFiles
+  // 3. getUserFiles DONE
   // 4. getGroupFiles
   // 5. downloadFile
 
-  @PostMapping("/files")
+  @PostMapping(value = "/files", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) {
     try {
@@ -40,4 +41,29 @@ public class FileController {
       return ResponseEntity.badRequest().header("Message", e.getMessage()).build();
     }
   }
+
+  @GetMapping("/files")
+  @ResponseBody
+  public ResponseEntity getUserFiles(
+      @RequestParam(value = "fileName", required = false, defaultValue = "")
+          final String fileName) {
+    return ResponseEntity.ok(
+        materialService.getUserFiles(
+            fileName.isEmpty() ? null : fileName, AuthenticationUtils.INSTANCE.getCurrentUserId()));
+  }
+
+  // draw for downloading file
+
+  //    //@GetMapping("/files/{fileId}")
+  //    @GetMapping("/download/{filename:.+}")
+  //    @ResponseBody
+  //    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {
+  //
+  //        Resource resource = storageService.loadAsResource(filename);
+  //
+  //        return ResponseEntity.ok()
+  //                .header(HttpHeaders.CONTENT_DISPOSITION,
+  //                        "attachment; filename=\"" + resource.getFilename() + "\"")
+  //                .body(resource);
+  //    }
 }

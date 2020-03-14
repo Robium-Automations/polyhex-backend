@@ -1,5 +1,9 @@
 package com.robiumautomations.polyhex.services;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import com.robiumautomations.polyhex.models.dtos.files.CreateFileResponseDto;
 import com.robiumautomations.polyhex.models.materials.Material;
 import com.robiumautomations.polyhex.repos.MaterialRepo;
 
@@ -19,5 +23,31 @@ public class MaterialService {
     final Material newMaterial = storageService.store(file, creatorId);
     materialRepo.save(newMaterial);
     return newMaterial;
+  }
+
+  public List<CreateFileResponseDto> getUserFiles(final String fileNameQuery, final String userId) {
+    if (fileNameQuery == null) {
+      return fromMaterialsListToMaterialsDtoList(materialRepo.getUserFiles(userId));
+    } else {
+      return fromMaterialsListToMaterialsDtoList(
+          materialRepo.getUserFiles(userId, "%" + fileNameQuery + "%"));
+    }
+  }
+
+  private List<CreateFileResponseDto> fromMaterialsListToMaterialsDtoList(
+      final List<Material> materials) {
+    LinkedList<CreateFileResponseDto> result = new LinkedList<>();
+
+    for (Material material : materials) {
+      result.add(
+          new CreateFileResponseDto(
+              material.getMaterialId(),
+              material.getName(),
+              material.getDataType(),
+              null,
+              material.getAuthorId(),
+              material.getCreatingDate().getTime()));
+    }
+    return result;
   }
 }

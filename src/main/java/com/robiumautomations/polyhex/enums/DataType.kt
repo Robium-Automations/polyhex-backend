@@ -14,7 +14,7 @@ enum class DataType {
     override fun getPossibleExtensions() = listOf("mp3", "wav")
   },
   document {
-    override fun getPossibleExtensions() = listOf("pdf, doc", "docx", "txt", "odt")
+    override fun getPossibleExtensions() = listOf("pdf", "doc", "docx", "txt", "odt")
   },
   other {
     override fun getPossibleExtensions() = emptyList<String>()

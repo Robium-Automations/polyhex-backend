@@ -6,7 +6,7 @@ class CreateFileResponseDto(
     val materialId: String,
     val fileName: String,
     val dataType: DataType,
-    val fileSize: Long,
+    val fileSize: Long?,
     val authorId: String,
     val creationDate: Long
 )

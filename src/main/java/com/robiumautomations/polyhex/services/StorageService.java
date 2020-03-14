@@ -90,8 +90,8 @@ public class StorageService {
     }
   }
 
-  public Path load(String filename) {
-    return rootLocation.resolve(filename);
+  public Path load(String fileId) {
+    return rootLocation.resolve(fileId);
   }
 
   public Resource loadAsResource(String filename) {

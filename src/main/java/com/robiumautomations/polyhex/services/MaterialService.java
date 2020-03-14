@@ -10,6 +10,7 @@ import com.robiumautomations.polyhex.repos.MaterialRepo;
 import com.robiumautomations.polyhex.repos.ShareMaterialRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -72,5 +73,10 @@ public class MaterialService {
       return fromMaterialsListToMaterialsDtoList(
           materialRepo.getGroupFilesForUser(groupId, userId, fileNameQuery));
     }
+  }
+
+  public Resource getFile(String fileId, String currentUserId) {
+    // TODO: check if user can access to the file (TARAS)
+    storageService.load(fileId);
   }
 }

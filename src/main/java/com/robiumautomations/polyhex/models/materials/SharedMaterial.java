@@ -2,16 +2,14 @@ package com.robiumautomations.polyhex.models.materials;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "shared_materials")
 @Data
 public class SharedMaterial {
     @Id
+    @GeneratedValue
     @Column(name = "material_id")
     private String materialId;
     @Column(name = "group_id")

@@ -62,4 +62,15 @@ public class MaterialService {
     shareMaterialRepo.save(newSharedMaterial);
     return material;
   }
+
+  public List<CreateFileResponseDto> getGroupFiles(
+      String groupId, String userId, final String fileNameQuery) {
+    if (fileNameQuery == null) {
+      return fromMaterialsListToMaterialsDtoList(
+          materialRepo.getGroupFilesForUser(groupId, userId));
+    } else {
+      return fromMaterialsListToMaterialsDtoList(
+          materialRepo.getGroupFilesForUser(groupId, userId, fileNameQuery));
+    }
+  }
 }

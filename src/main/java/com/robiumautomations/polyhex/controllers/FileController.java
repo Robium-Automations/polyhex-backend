@@ -42,6 +42,16 @@ public class FileController {
     }
   }
 
+  @GetMapping("/files")
+  @ResponseBody
+  public ResponseEntity getUserFiles(
+      @RequestParam(value = "fileName", required = false, defaultValue = "")
+          final String fileName) {
+    return ResponseEntity.ok(
+        materialService.getUserFiles(
+            fileName.isEmpty() ? null : fileName, AuthenticationUtils.INSTANCE.getCurrentUserId()));
+  }
+
   @PostMapping(value = "/groups/{group_id}/files", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public ResponseEntity uploadFileForGroup(
@@ -64,14 +74,22 @@ public class FileController {
     }
   }
 
-  @GetMapping("/files")
+  @GetMapping(value = "/groups/{group_id}/files", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public ResponseEntity getUserFiles(
+  public ResponseEntity getGroupFiles(
+      @PathVariable("group_id") String groupId,
       @RequestParam(value = "fileName", required = false, defaultValue = "")
           final String fileName) {
-    return ResponseEntity.ok(
-        materialService.getUserFiles(
-            fileName.isEmpty() ? null : fileName, AuthenticationUtils.INSTANCE.getCurrentUserId()));
+    try {
+      return ResponseEntity.ok(
+          materialService.getGroupFiles(
+              groupId,
+              AuthenticationUtils.INSTANCE.getCurrentUserId(),
+              fileName.isEmpty() ? null : fileName));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.badRequest().header("Message", e.getMessage()).build();
+    }
   }
 
   // draw for downloading file

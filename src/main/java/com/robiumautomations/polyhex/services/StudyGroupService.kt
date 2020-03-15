@@ -1,5 +1,6 @@
 package com.robiumautomations.polyhex.services
 
+import com.robiumautomations.polyhex.daos.StudyGroupRepoDao
 import com.robiumautomations.polyhex.enums.ManageGroupAction
 import com.robiumautomations.polyhex.models.StudyGroup
 import com.robiumautomations.polyhex.models.UserId
@@ -8,21 +9,16 @@ import com.robiumautomations.polyhex.repos.StudyGroupRepo
 import com.robiumautomations.polyhex.repos.SubjectRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import sun.security.x509.CertificateSubjectName
 
 @Service
-class StudyGroupService {
-
-  @Autowired
-  private lateinit var studyGroupRepo: StudyGroupRepo
-
-  @Autowired
-  private lateinit var semesterRepo: SemesterRepo
-
-  @Autowired
-  private lateinit var subjectRepo: SubjectRepo
-
-  @Autowired
-  private lateinit var groupManagementService: GroupManagementService
+class StudyGroupService @Autowired constructor(
+    private val studyGroupRepo: StudyGroupRepo,
+    private val semesterRepo: SemesterRepo,
+    private val subjectRepo: SubjectRepo,
+    private val groupManagementService: GroupManagementService,
+    private val studyGroupRepoDao: StudyGroupRepoDao
+) {
 
   fun createGroup(
       groupName: String,
@@ -62,6 +58,22 @@ class StudyGroupService {
             ?: throw Exception("Property 'userId' is not specified. Dude, I don't know whom I should delete.")
       }
     }
+  }
+
+  @JvmOverloads
+  fun searchGroups(
+      userId: UserId,
+      facultyId: String? = null,
+      subjectId: String? = null,
+      semesterId: String? = null,
+      groupName: String? = null,
+      subjectName: String? = null,
+      offset: Int = 0,
+      limit: Int = 0
+  ): List<StudyGroup> {
+    return studyGroupRepoDao.getGroups(
+        userId, facultyId, subjectId, semesterId, groupName, subjectName, offset, limit
+    )
   }
 
   /**

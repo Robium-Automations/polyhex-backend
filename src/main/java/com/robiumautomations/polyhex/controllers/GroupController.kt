@@ -13,10 +13,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class GroupController {
-
-  @Autowired
-  private lateinit var groupService: StudyGroupService
+class GroupController @Autowired constructor(
+    private val groupService: StudyGroupService
+) {
 
   @PostMapping(
       "/groups",
@@ -88,5 +87,127 @@ class GroupController {
       e.printStackTrace()
       ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
     }
+  }
+
+  @GetMapping(
+      "/groups",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getGroups(
+      @RequestParam("groupName", required = false, defaultValue = "") groupName: String,
+      @RequestParam("subjectName", required = false, defaultValue = "") subjectName: String,
+      @RequestParam("offset", required = false, defaultValue = "0") offset: String,
+      @RequestParam("limit", required = false, defaultValue = "10") limit: String
+  ): ResponseEntity<Any> {
+    try {
+      offset.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    try {
+      limit.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    return ResponseEntity.ok(groupService.searchGroups(
+        userId = AuthenticationUtils.getCurrentUserId(),
+        groupName = if (groupName.isBlank()) null else groupName,
+        subjectName = if (subjectName.isBlank()) null else subjectName,
+        offset = offset.toInt(),
+        limit = limit.toInt()
+    ))
+  }
+
+  @GetMapping(
+      "/faculties/{faculty_id}/groups",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getGroupsByFaculty(
+      @PathVariable("facultyId") facultyId: String,
+      @RequestParam("groupName", required = false, defaultValue = "") groupName: String,
+      @RequestParam("subjectName", required = false, defaultValue = "") subjectName: String,
+      @RequestParam("offset", required = false, defaultValue = "0") offset: String,
+      @RequestParam("limit", required = false, defaultValue = "10") limit: String
+  ): ResponseEntity<Any> {
+    try {
+      offset.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    try {
+      limit.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    return ResponseEntity.ok(groupService.searchGroups(
+        userId = AuthenticationUtils.getCurrentUserId(),
+        facultyId = facultyId,
+        groupName = if (groupName.isBlank()) null else groupName,
+        subjectName = if (subjectName.isBlank()) null else subjectName,
+        offset = offset.toInt(),
+        limit = limit.toInt()
+    ))
+  }
+
+  @GetMapping(
+      "/subjects/{subject_id}/groups",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getGroupsBySubject(
+      @PathVariable("subjectId") subjectId: String,
+      @RequestParam("groupName", required = false, defaultValue = "") groupName: String,
+      @RequestParam("subjectName", required = false, defaultValue = "") subjectName: String,
+      @RequestParam("offset", required = false, defaultValue = "0") offset: String,
+      @RequestParam("limit", required = false, defaultValue = "10") limit: String
+  ): ResponseEntity<Any> {
+    try {
+      offset.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    try {
+      limit.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    return ResponseEntity.ok(groupService.searchGroups(
+        userId = AuthenticationUtils.getCurrentUserId(),
+        subjectId = subjectId,
+        groupName = if (groupName.isBlank()) null else groupName,
+        subjectName = if (subjectName.isBlank()) null else subjectName,
+        offset = offset.toInt(),
+        limit = limit.toInt()
+    ))
+  }
+
+  @GetMapping(
+      "/semester/{semester_id}/groups",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getGroupsBySemester(
+      @PathVariable("semesterId") semesterId: String,
+      @RequestParam("groupName", required = false, defaultValue = "") groupName: String,
+      @RequestParam("subjectName", required = false, defaultValue = "") subjectName: String,
+      @RequestParam("offset", required = false, defaultValue = "0") offset: String,
+      @RequestParam("limit", required = false, defaultValue = "10") limit: String
+  ): ResponseEntity<Any> {
+    try {
+      offset.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    try {
+      limit.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    return ResponseEntity.ok(groupService.searchGroups(
+        userId = AuthenticationUtils.getCurrentUserId(),
+        semesterId = semesterId,
+        groupName = if (groupName.isBlank()) null else groupName,
+        subjectName = if (subjectName.isBlank()) null else subjectName,
+        offset = offset.toInt(),
+        limit = limit.toInt()
+    ))
   }
 }

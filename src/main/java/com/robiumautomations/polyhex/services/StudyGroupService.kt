@@ -3,21 +3,24 @@ package com.robiumautomations.polyhex.services
 import com.robiumautomations.polyhex.daos.StudyGroupRepoDao
 import com.robiumautomations.polyhex.enums.ManageGroupAction
 import com.robiumautomations.polyhex.models.StudyGroup
+import com.robiumautomations.polyhex.models.User
 import com.robiumautomations.polyhex.models.UserId
 import com.robiumautomations.polyhex.repos.SemesterRepo
 import com.robiumautomations.polyhex.repos.StudyGroupRepo
 import com.robiumautomations.polyhex.repos.SubjectRepo
+import com.robiumautomations.polyhex.repos.UserRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import sun.security.x509.CertificateSubjectName
 
 @Service
 class StudyGroupService @Autowired constructor(
+    private val groupManagementService: GroupManagementService,
+    private val studyGroupRepoDao: StudyGroupRepoDao,
     private val studyGroupRepo: StudyGroupRepo,
     private val semesterRepo: SemesterRepo,
     private val subjectRepo: SubjectRepo,
-    private val groupManagementService: GroupManagementService,
-    private val studyGroupRepoDao: StudyGroupRepoDao
+    private val userRepo: UserRepo
 ) {
 
   fun createGroup(
@@ -68,11 +71,12 @@ class StudyGroupService @Autowired constructor(
       semesterId: String? = null,
       groupName: String? = null,
       subjectName: String? = null,
+      joined: Boolean = false,
       offset: Int = 0,
       limit: Int = 0
   ): List<StudyGroup> {
     return studyGroupRepoDao.getGroups(
-        userId, facultyId, subjectId, semesterId, groupName, subjectName, offset, limit
+        userId, facultyId, subjectId, semesterId, groupName, subjectName, joined, offset, limit
     )
   }
 
@@ -104,6 +108,18 @@ class StudyGroupService @Autowired constructor(
   private fun ensureGroupNameIsAvailable(groupName: String, subjectId: String, semesterId: String) {
     if (studyGroupRepo.checkIfGroupNameIsAvailable(groupName, subjectId, semesterId).isNotEmpty()) {
       throw Exception("Group name '$groupName' is not available. Please choose another one.")
+    }
+  }
+
+  fun getUsersOfGroup(
+      groupId: String,
+      name: String? = null,
+      currentUserId: UserId
+  ): List<User> {
+    return if (name == null) {
+      userRepo.getUsersOfGroup(studyGroupId = groupId, currentUserId = currentUserId)
+    } else {
+      userRepo.getUsersOfGroup(studyGroupId = groupId, currentUserId = currentUserId, nameQuery = "%$name%")
     }
   }
 }

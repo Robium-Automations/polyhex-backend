@@ -19,12 +19,14 @@ open class StudyGroupRepoDao @Autowired constructor(
       semesterId: String? = null,
       groupName: String? = null,
       subjectName: String? = null,
+      joined: Boolean = false,
       offset: Int = 0,
       limit: Int = 10
   ): List<StudyGroup> {
     var queryString = "SELECT SG.* FROM study_groups SG " +
         "JOIN subjects S ON SG.subject_id = S.subject_id " +
         "JOIN faculties F ON S.faculty_id = F.faculty_id " +
+        "JOIN users_groups UG ON SG.study_group_id = UG.study_group_id " +
         "WHERE F.university_id = (SELECT US.university_id FROM users US WHERE US.user_id = '$userId' ) "
     facultyId?.let {
       queryString += "AND F.faculty_id = '$it' "
@@ -44,6 +46,10 @@ open class StudyGroupRepoDao @Autowired constructor(
 
     subjectName?.let {
       queryString += "AND S.subject_name ILIKE '%$it%' "
+    }
+
+    if (joined) {
+      queryString += "AND UG.user_id = ':$userId' "
     }
 
     queryString += "ORDER BY SG.study_group_name LIMIT $limit OFFSET $offset ;"

@@ -6,6 +6,7 @@ import com.robiumautomations.polyhex.enums.ManageGroupAction
 import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.services.StudyGroupService
+import com.robiumautomations.polyhex.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -96,6 +97,7 @@ class GroupController @Autowired constructor(
   fun getGroups(
       @RequestParam("groupName", required = false, defaultValue = "") groupName: String,
       @RequestParam("subjectName", required = false, defaultValue = "") subjectName: String,
+      @RequestParam("joined", required = false, defaultValue = "false") joined: String,
       @RequestParam("offset", required = false, defaultValue = "0") offset: String,
       @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
@@ -113,6 +115,7 @@ class GroupController @Autowired constructor(
         userId = AuthenticationUtils.getCurrentUserId(),
         groupName = if (groupName.isBlank()) null else groupName,
         subjectName = if (subjectName.isBlank()) null else subjectName,
+        joined = joined.toBoolean(),
         offset = offset.toInt(),
         limit = limit.toInt()
     ))
@@ -126,6 +129,7 @@ class GroupController @Autowired constructor(
       @PathVariable("facultyId") facultyId: String,
       @RequestParam("groupName", required = false, defaultValue = "") groupName: String,
       @RequestParam("subjectName", required = false, defaultValue = "") subjectName: String,
+      @RequestParam("joined", required = false, defaultValue = "false") joined: String,
       @RequestParam("offset", required = false, defaultValue = "0") offset: String,
       @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
@@ -144,6 +148,7 @@ class GroupController @Autowired constructor(
         facultyId = facultyId,
         groupName = if (groupName.isBlank()) null else groupName,
         subjectName = if (subjectName.isBlank()) null else subjectName,
+        joined = joined.toBoolean(),
         offset = offset.toInt(),
         limit = limit.toInt()
     ))
@@ -157,6 +162,7 @@ class GroupController @Autowired constructor(
       @PathVariable("subjectId") subjectId: String,
       @RequestParam("groupName", required = false, defaultValue = "") groupName: String,
       @RequestParam("subjectName", required = false, defaultValue = "") subjectName: String,
+      @RequestParam("joined", required = false, defaultValue = "false") joined: String,
       @RequestParam("offset", required = false, defaultValue = "0") offset: String,
       @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
@@ -175,6 +181,7 @@ class GroupController @Autowired constructor(
         subjectId = subjectId,
         groupName = if (groupName.isBlank()) null else groupName,
         subjectName = if (subjectName.isBlank()) null else subjectName,
+        joined = joined.toBoolean(),
         offset = offset.toInt(),
         limit = limit.toInt()
     ))
@@ -188,6 +195,7 @@ class GroupController @Autowired constructor(
       @PathVariable("semesterId") semesterId: String,
       @RequestParam("groupName", required = false, defaultValue = "") groupName: String,
       @RequestParam("subjectName", required = false, defaultValue = "") subjectName: String,
+      @RequestParam("joined", required = false, defaultValue = "false") joined: String,
       @RequestParam("offset", required = false, defaultValue = "0") offset: String,
       @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
@@ -206,8 +214,25 @@ class GroupController @Autowired constructor(
         semesterId = semesterId,
         groupName = if (groupName.isBlank()) null else groupName,
         subjectName = if (subjectName.isBlank()) null else subjectName,
+        joined = joined.toBoolean(),
         offset = offset.toInt(),
         limit = limit.toInt()
     ))
+  }
+
+  @GetMapping(
+      "/groups{groupId}/users",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getUsersByGroup(
+      @PathVariable("groupId") groupId: String,
+      @RequestParam("name", required = false, defaultValue = "") name: String
+
+  ): ResponseEntity<Any> {
+    return ResponseEntity.ok(groupService.getUsersOfGroup(
+        groupId,
+        if (name.isBlank()) null else name,
+        AuthenticationUtils.getCurrentUserId())
+    )
   }
 }

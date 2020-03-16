@@ -16,7 +16,7 @@ interface UniversityRepo : JpaRepository<University, String> {
   fun getUserUniversity(userId: String): University?
 
   @Query(
-      value = "SELECT * FROM universities UN WHERE UN.university_name LIKE :queryString ORDER BY UN.university_name LIMIT :limit OFFSET :offset ;",
+      value = "SELECT * FROM universities UN WHERE UN.university_name ILIKE :queryString ORDER BY UN.university_name LIMIT :limit OFFSET :offset ;",
       nativeQuery = true
   )
   fun getUniversities(queryString: String, offset: Int, limit: Int): List<University>

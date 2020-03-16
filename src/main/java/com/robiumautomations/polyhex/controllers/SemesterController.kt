@@ -11,10 +11,9 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class SemesterController {
-
-  @Autowired
-  private lateinit var semesterService: SemesterService
+class SemesterController @Autowired constructor(
+    private val semesterService: SemesterService
+) {
 
   @PostMapping(
       "/semesters",
@@ -45,18 +44,14 @@ class SemesterController {
   }
 
   @GetMapping(
-      "/universities/{universityId}/semesters",
+      "/semesters",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getSemesters(
-      @PathVariable("universityId") universityId: String,
+      @RequestParam("semesterName", required = false, defaultValue = "") semesterName: String,
       @RequestParam("offset", required = false, defaultValue = "0") offset: String,
       @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
-    if (universityId.isBlank()) {
-      return ResponseEntity(mapOf("Message" to "Specify 'universityId'."), HttpStatus.BAD_REQUEST)
-    }
-
     try {
       offset.toInt()
     } catch (e: NumberFormatException) {
@@ -70,7 +65,7 @@ class SemesterController {
     return ResponseEntity.ok()
         .header("offset", offset)
         .header("limit", limit)
-        .body(semesterService.getSemester(universityId, offset.toInt(), limit.toInt()))
+        .body(semesterService.getSemester(AuthenticationUtils.getCurrentUserId(), semesterName, offset.toInt(), limit.toInt()))
   }
 
   @PutMapping(

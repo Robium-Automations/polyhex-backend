@@ -9,13 +9,10 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class UniversityService {
-
-  @Autowired
-  private lateinit var universityRepo: UniversityRepo
-
-  @Autowired
-  private lateinit var userService: UserService
+class UniversityService @Autowired constructor(
+    private val universityRepo: UniversityRepo,
+    private val userService: UserService
+) {
 
   fun getUserUniversity(userId: String): University? {
     return universityRepo.getUserUniversity(userId)

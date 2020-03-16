@@ -11,17 +11,16 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class UniversityController {
-
-  @Autowired
-  private lateinit var universityService: UniversityService
+class UniversityController @Autowired constructor(
+    private val universityService: UniversityService
+) {
 
   @GetMapping(
       "/universities",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getUniversities(
-      @RequestParam("name", required = false, defaultValue = "") name: String,
+      @RequestParam("universityName", required = false, defaultValue = "") universityName: String,
       @RequestParam("offset", required = false, defaultValue = "0") offset: String,
       @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
@@ -40,7 +39,7 @@ class UniversityController {
         .header("offset", offset)
         .body(
             universityService.getUniversities(
-                name.getQueryString(),
+                if (universityName.isBlank()) null else universityName,
                 offset.toInt(),
                 limit.toInt()
             )
@@ -80,5 +79,3 @@ class UniversityController {
     }
   }
 }
-
-private fun String.getQueryString() = if (isBlank()) null else this

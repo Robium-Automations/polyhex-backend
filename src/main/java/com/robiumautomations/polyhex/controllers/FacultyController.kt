@@ -5,7 +5,6 @@ import com.robiumautomations.polyhex.dtos.faculties.CreateFacultyRequestDto
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.services.FacultyService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -13,10 +12,9 @@ import org.springframework.web.bind.annotation.*
 import java.lang.Exception
 
 @RestController
-class FacultyController {
-
-  @Autowired
-  private lateinit var facultyService: FacultyService
+class FacultyController @Autowired constructor(
+    private val facultyService: FacultyService
+) {
 
   @PostMapping(
       "/faculties",
@@ -44,18 +42,14 @@ class FacultyController {
   }
 
   @GetMapping(
-      "/universities/{universityId}/faculties",
+      "/faculties",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getUniversityFaculties(
-      @PathVariable("universityId") universityId: String,
+      @RequestParam("facultyName", required = false, defaultValue = "") facultyName: String,
       @RequestParam("offset", required = false, defaultValue = "0") offset: String,
       @RequestParam("limit", required = false, defaultValue = "10") limit: String
   ): ResponseEntity<Any> {
-    if (universityId.isBlank()) {
-      return ResponseEntity(mapOf("Message" to "Specify 'universityId'."), HttpStatus.BAD_REQUEST)
-    }
-
     try {
       offset.toInt()
     } catch (e: NumberFormatException) {
@@ -69,7 +63,11 @@ class FacultyController {
     return ResponseEntity.ok()
         .header("offset", offset)
         .header("limit", limit)
-        .body(facultyService.getByFacultiesByUniversityId(universityId, offset.toInt(), limit.toInt()))
+        .body(facultyService.getByFaculties(
+            AuthenticationUtils.getCurrentUserId(),
+            if (facultyName.isBlank()) null else facultyName,
+            offset.toInt(),
+            limit.toInt()))
   }
 
   @GetMapping(

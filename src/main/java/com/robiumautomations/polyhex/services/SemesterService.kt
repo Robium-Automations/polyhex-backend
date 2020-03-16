@@ -1,5 +1,6 @@
 package com.robiumautomations.polyhex.services
 
+import com.robiumautomations.polyhex.models.UserId
 import com.robiumautomations.polyhex.models.universityentities.Semester
 import com.robiumautomations.polyhex.repos.SemesterRepo
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,11 +41,16 @@ class SemesterService {
   }
 
   fun getSemester(
-      universityId: String,
+      userId: UserId,
+      semesterName: String? = null,
       offset: Int = 0,
       limit: Int = 10
   ): List<Semester> {
-    return semesterRepo.getSemesters(universityId, offset, limit)
+    return if (semesterName == null) {
+      semesterRepo.getSemesters(userId, offset, limit)
+    } else {
+      semesterRepo.getSemesters(userId, "%$semesterName%", offset, limit)
+    }
   }
 
   fun updateSemester(

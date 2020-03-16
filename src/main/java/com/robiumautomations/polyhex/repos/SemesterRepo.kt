@@ -1,5 +1,6 @@
 package com.robiumautomations.polyhex.repos
 
+import com.robiumautomations.polyhex.models.UserId
 import com.robiumautomations.polyhex.models.universityentities.Semester
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -9,11 +10,24 @@ import org.springframework.stereotype.Repository
 interface SemesterRepo : JpaRepository<Semester, String> {
 
   @Query(
-      value = "SELECT * FROM semesters S WHERE S.university_id = :universityId LIMIT :limit OFFSET :offset ;",
+      value = "SELECT * FROM semesters S WHERE S.university_id = (SELECT U.university_id FROM users U WHERE U.user_id = :userId )" +
+          " LIMIT :limit OFFSET :offset ;",
       nativeQuery = true
   )
   fun getSemesters(
-      universityId: String,
+      userId: UserId,
+      offset: Int = 0,
+      limit: Int = 10
+  ): List<Semester>
+
+  @Query(
+      value = "SELECT * FROM semesters S WHERE S.university_id = (SELECT U.university_id FROM users U WHERE U.user_id = :userId )" +
+          " AND S.semester_name ILIKE :semesterName OR S.semester_description ILIKE :semesterName LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getSemesters(
+      userId: UserId,
+      semesterName: String,
       offset: Int = 0,
       limit: Int = 10
   ): List<Semester>

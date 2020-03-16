@@ -22,7 +22,7 @@ interface SemesterRepo : JpaRepository<Semester, String> {
 
   @Query(
       value = "SELECT * FROM semesters S WHERE S.university_id = (SELECT U.university_id FROM users U WHERE U.user_id = :userId )" +
-          " AND S.semester_name ILIKE :semester_name OR S.semester_description ILIKE :semester_description LIMIT :limit OFFSET :offset ;",
+          " AND S.semester_name ILIKE :semesterName OR S.semester_description ILIKE :semesterName LIMIT :limit OFFSET :offset ;",
       nativeQuery = true
   )
   fun getSemesters(

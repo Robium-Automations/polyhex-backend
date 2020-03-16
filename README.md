@@ -671,3 +671,101 @@ Authorization: Bearer long_token_should_be_here
 ```
 HTTP/1.1 200 OK
 ```
+
+## GET /groups (#GET-groups)
+
+Description: get all groups of the university that user belongs to in alphabetical order.
+
+Requires: 
+- token
+
+Returns:
+- 200 if everything is fine and group list
+
+
+Parameters:
+- **groupName**: optional, groupName part.
+- **subjectName**: optional, part of the subject name, that the group belongs to
+- **joined**: optional, boolean (true|false), default=false. If true - returns only groups that user already joined. 
+- **offset**: optional, default=0
+- **limit**: optional, default=10
+
+**Request example**
+```
+GET /groups HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+offset: 0
+limit: 10
+
+[
+    {
+        "studyGroupId": "d830bf15-d8d6-44e4-b56a-44fce8e8e980",
+        "studyGroupName": "Study group for sse",
+        "subjectId": "b1ca3120-63ce-11ea-bc55-0242ac130003",
+        "semesterId": "a696e319-98fb-4cd4-b0d3-577041010576"
+    },
+    {
+        "studyGroupId": "d0d85462-67ab-11ea-bc55-0242ac130003",
+        "studyGroupName": "Study group for XML",
+        "subjectId": "9b1c233a-67ab-11ea-bc55-0242ac130003",
+        "semesterId": "a696e319-98fb-4cd4-b0d3-577041010576"
+    }
+]
+```
+
+## GET /faculties/{facultyId}/groups
+Description: get all groups of the particular faculty in alphabetical order, only if the user and the faculty belong to the same university.
+More info: [GET /groups](#GET-groups)
+
+
+## GET /subjects/{subjectId}/groups
+Description: get all groups of the particular subject in alphabetical order, only if the user and the subject belong to the same university.
+More info: [GET /groups](#GET-groups)
+
+
+## GET /semesters/{semesterId}/groups
+Description: get all groups of the particular semester in alphabetical order, only if the user and the semester belong to the same university.
+More info: [GET /groups](#GET-groups)
+
+
+## GET /groups/{groupId}/users
+
+Description: get all users of the group ordered by last name.
+
+Requires: 
+- token
+
+Returns:
+- 200 if everything is fine and user list
+
+
+Parameters:
+- **groupId**: required
+- **name**: optional, part of the first or last name
+
+**Request example**
+```
+GET /groups/d830bf15-d8d6-44e4-b56a-44fce8e8e980/users HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+[
+    {
+        "userId": "3c49a1c0-2469-4b97-9a0d-273df0370395",
+        "username": "admin",
+        "firstName": null,
+        "lastName": null,
+        "birthday": null,
+        "universityId": "398adbad-5b94-4a19-9fc8-d130e4614844"
+    }
+]
+```

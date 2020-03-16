@@ -1,5 +1,6 @@
 package com.robiumautomations.polyhex.services
 
+import com.robiumautomations.polyhex.models.UserId
 import com.robiumautomations.polyhex.models.universityentities.Faculty
 import com.robiumautomations.polyhex.repos.FacultyRepo
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,12 +41,17 @@ class FacultyService {
     return facultyRepo.checkIfFacultyNameAvailable(universityId, facultyName).isEmpty()
   }
 
-  fun getByFacultiesByUniversityId(
-      universityId: String,
+  fun getByFaculties(
+      userId: UserId,
+      facultyName: String? = null,
       offset: Int = 0,
       limit: Int = 10
   ): List<Faculty> {
-    return facultyRepo.getByUniversityId(universityId, offset, limit)
+    return if (facultyName == null) {
+      facultyRepo.getByUniversityId(userId, offset, limit)
+    } else {
+      facultyRepo.getByUniversityId(userId, "%$facultyName%", offset, limit)
+    }
   }
 
   fun getFacultyById(facultyId: String): Faculty? {

@@ -26,7 +26,6 @@ open class StudyGroupRepoDao @Autowired constructor(
     var queryString = "SELECT SG.* FROM study_groups SG " +
         "JOIN subjects S ON SG.subject_id = S.subject_id " +
         "JOIN faculties F ON S.faculty_id = F.faculty_id " +
-        "JOIN users_groups UG ON SG.study_group_id = UG.study_group_id " +
         "WHERE F.university_id = (SELECT US.university_id FROM users US WHERE US.user_id = '$userId' ) "
     facultyId?.let {
       queryString += "AND F.faculty_id = '$it' "
@@ -37,7 +36,7 @@ open class StudyGroupRepoDao @Autowired constructor(
     }
 
     semesterId?.let {
-      queryString += "AND SG.semesterId = '$it' "
+      queryString += "AND SG.semester_id = '$it' "
     }
 
     groupName?.let {
@@ -49,7 +48,7 @@ open class StudyGroupRepoDao @Autowired constructor(
     }
 
     if (joined) {
-      queryString += "AND UG.user_id = ':$userId' "
+      queryString += "AND SG.study_group_id in (SELECT DISTINCT(UG.study_group_id) FROM users_groups UG WHERE UG.user_id = '$userId' ) "
     }
 
     queryString += "ORDER BY SG.study_group_name LIMIT $limit OFFSET $offset ;"

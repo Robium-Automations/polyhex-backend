@@ -11,7 +11,6 @@ import com.robiumautomations.polyhex.repos.SubjectRepo
 import com.robiumautomations.polyhex.repos.UserRepo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import sun.security.x509.CertificateSubjectName
 
 @Service
 class StudyGroupService @Autowired constructor(

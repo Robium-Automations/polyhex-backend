@@ -122,7 +122,7 @@ class GroupController @Autowired constructor(
   }
 
   @GetMapping(
-      "/faculties/{faculty_id}/groups",
+      "/faculties/{facultyId}/groups",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getGroupsByFaculty(
@@ -155,7 +155,7 @@ class GroupController @Autowired constructor(
   }
 
   @GetMapping(
-      "/subjects/{subject_id}/groups",
+      "/subjects/{subjectId}/groups",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getGroupsBySubject(
@@ -188,7 +188,7 @@ class GroupController @Autowired constructor(
   }
 
   @GetMapping(
-      "/semester/{semester_id}/groups",
+      "/semesters/{semesterId}/groups",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getGroupsBySemester(
@@ -221,7 +221,7 @@ class GroupController @Autowired constructor(
   }
 
   @GetMapping(
-      "/groups{groupId}/users",
+      "/groups/{groupId}/users",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getUsersByGroup(

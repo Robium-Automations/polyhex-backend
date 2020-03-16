@@ -176,9 +176,9 @@ HTTP/1.1 200 OK
 }
 ```
 
-## GET /universities/{universityId}/faculties
+## GET /faculties
 
-Description: returns faculty list of the given university in alphabetical order
+Description: returns faculty list of the university that user belongs to in alphabetical order
 
 Requires:
 - token
@@ -187,13 +187,13 @@ Returns:
 - 200 and list of faculties
 
 Parameters: 
-- **universityId**: mandatory.
+- **facultyName**: optional, part of faculty name or faculty description
 - **offset**: optional, default=0
 - **limit**: optional, default=10
 
 **Request example**
 ```
-GET /universities/university_uuid/faculties?offet=5&limit=10 HTTP/1.1
+GET /faculties?offet=5&limit=10 HTTP/1.1
 Authorization: Bearer long_token_should_be_here
 ```
 
@@ -201,7 +201,7 @@ Authorization: Bearer long_token_should_be_here
 ```
 HTTP/1.1 200 OK
 offset: 5
-limit: 3
+limit: 10
 
 [
     {
@@ -373,7 +373,7 @@ HTTP/1.1 200 OK
 }
 ```
 
-## GET /universities/{universityId}/semesters
+## GET //semesters
 
 Description: get semesters
 
@@ -382,16 +382,15 @@ Requires:
 
 Returns:
 - 200 and list of semester objects, of emptyList
-- 200 and empty list if universityId is incorrect
 
 Parameters: 
-- **universityId**: mandatory.
+- **semesterName**: optional, part of semester name.
 - **offset**: optional, default=0
 - **limit**: optional, default=10
 
 **Request example**
 ```
-GET /universities/university_uuid/semesters HTTP/1.1
+GET /semesters HTTP/1.1
 Authorization: Bearer long_token_should_be_here
 ```
 
@@ -609,7 +608,7 @@ Returns:
 - 200 if everything is fine and university list
 
 Parameters: 
-- **name**: optional, part of university name, used as a search term
+- **universityName**: optional, part of university name, used as a search term
 - **offset**: optional, default=0
 - **limit**: optional, default=10
 

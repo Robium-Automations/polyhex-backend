@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.*
 import java.lang.Exception
 
 @RestController
-class FacultyController {
-
-  @Autowired
-  private lateinit var facultyService: FacultyService
+class FacultyController @Autowired constructor(
+    private val facultyService: FacultyService
+) {
 
   @PostMapping(
       "/faculties",

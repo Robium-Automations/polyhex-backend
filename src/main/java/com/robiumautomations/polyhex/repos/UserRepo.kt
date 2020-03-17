@@ -11,7 +11,7 @@ interface UserRepo : JpaRepository<User, UserId> {
 
   @Query(
       value = "SELECT U.* FROM users U JOIN users_groups UG ON U.user_id = UG.user_id WHERE UG.study_group_id = :studyGroupId AND " +
-          "U.university_id = (SELECT U1x.university_id FROM users U1 WHERE U1.user_id = :currentUserId ) ORDER BY U.lname ;",
+          "U.university_id = (SELECT U1.university_id FROM users U1 WHERE U1.user_id = :currentUserId ) ORDER BY U.lname ;",
       nativeQuery = true
   )
   fun getUsersOfGroup(studyGroupId: String, currentUserId: UserId): List<User>

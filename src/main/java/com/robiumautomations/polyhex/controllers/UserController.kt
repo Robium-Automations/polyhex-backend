@@ -1,6 +1,6 @@
 package com.robiumautomations.polyhex.controllers
 
-import com.robiumautomations.polyhex.models.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.dtos.users.RegistrationUser
 import com.robiumautomations.polyhex.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -20,12 +20,10 @@ class UserController {
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun createUser(@RequestBody registrationUser: RegistrationUser): ResponseEntity<Any> {
-    try {
-      userService.registerNewUser(registrationUser).also {
-        return ResponseEntity(it, HttpStatus.CREATED)
-      }
+    return try {
+      ResponseEntity(userService.registerNewUser(registrationUser), HttpStatus.CREATED)
     } catch (e: Exception) {
-      return ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
+      ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
     }
   }
 

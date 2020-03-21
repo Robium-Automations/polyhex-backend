@@ -37,7 +37,7 @@ open class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
   override fun configure(http: HttpSecurity) {
     http.cors().and().csrf().disable().authorizeRequests()
         .antMatchers(
-            "/helloworld", "/health", "/signin"
+            "/helloworld", "/health", "/signin", "/universities"
         ).permitAll()
         .antMatchers(HttpMethod.POST, "/users").permitAll()
         .antMatchers(HttpMethod.HEAD, "/usernames/*", "/emails/*").permitAll()

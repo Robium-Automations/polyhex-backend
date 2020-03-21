@@ -7,13 +7,15 @@ import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
+typealias UserId = String
+
 @Entity
 @Table(name = "users")
 @Data
 class User(
     @Id
     @Column(name = "user_id")
-    val userId: String?,
+    val userId: UserId?,
     @Column(name = "username")
     val username: String?,
     @Column(name = "fname")
@@ -23,7 +25,7 @@ class User(
     @Column(name = "bday")
     val birthday: Date?,
     @Column(name = "university_id")
-    val universityId: String?
+    var universityId: String?
 ) {
 
   constructor(

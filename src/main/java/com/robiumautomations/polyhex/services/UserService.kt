@@ -3,7 +3,8 @@ package com.robiumautomations.polyhex.services
 import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.models.User
 import com.robiumautomations.polyhex.models.UserCredentials
-import com.robiumautomations.polyhex.models.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.models.UserId
 import com.robiumautomations.polyhex.repos.UserCredentialsRepo
 import com.robiumautomations.polyhex.repos.UserRepo
 import com.robiumautomations.polyhex.security.AuthenticationUser
@@ -13,7 +14,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -36,7 +36,7 @@ open class UserService : UserDetailsService {
     }
   }
 
-  fun getUserInfo(userId: String): User? {
+  fun getUserInfo(userId: UserId): User? {
     return userRepo.findByIdOrNull(userId)
   }
 
@@ -53,15 +53,14 @@ open class UserService : UserDetailsService {
       userCredentialsRepo.save(it)
     }
 
-    User(
+    return User(
         userId = userId,
         username = registrationUser.username!!,
         firstName = registrationUser.firstName,
         lastName = registrationUser.lastName,
         birthday = registrationUser.birthday
     ).also {
-      userRepo.save(it)
-      return it
+      save(it)
     }
   }
 
@@ -95,5 +94,9 @@ open class UserService : UserDetailsService {
 
   private fun isValidUsername(username: String): Boolean {
     return """^(?=.{8,20}${'$'})(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])${'$'}""".toRegex().matches(username)
+  }
+
+  fun save(user: User) {
+    userRepo.save(user)
   }
 }

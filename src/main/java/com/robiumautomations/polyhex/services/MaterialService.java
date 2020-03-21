@@ -1,5 +1,7 @@
 package com.robiumautomations.polyhex.services;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,9 +10,11 @@ import com.robiumautomations.polyhex.models.materials.Material;
 import com.robiumautomations.polyhex.models.materials.SharedMaterial;
 import com.robiumautomations.polyhex.repos.MaterialRepo;
 import com.robiumautomations.polyhex.repos.ShareMaterialRepo;
+import com.robiumautomations.polyhex.storage.FileNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,8 +80,16 @@ public class MaterialService {
   }
 
   public Resource getFile(String fileId, String currentUserId) {
-    // TODO: check if user can access to the file (TARAS)
-    storageService.load(fileId);
-    return null;
+    try {
+      final Path file = storageService.load(fileId);
+      Resource resource = new UrlResource(file.toUri());
+      if (resource.exists() || resource.isReadable()) {
+        return resource;
+      } else {
+        throw new FileNotFoundException("Could not read fileId: " + fileId);
+      }
+    } catch (MalformedURLException e) {
+      throw new FileNotFoundException("Could not read fileId: " + fileId, e);
+    }
   }
 }

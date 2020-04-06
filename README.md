@@ -102,6 +102,59 @@ HTTP/1.1 201 CREATED
 }
 ```
 
+## GET /users
+
+Description: get list of users of the same university
+
+Parameters:
+- **username**: mandatory, must be unique
+- **password**: mandatory, must be unique
+- **email**: must be unique
+- **firstName**: optional
+- **lastName**: optional
+- **birthday**: optional (as epoch timestamp)
+
+Response: returns 200 if everything is fine and user list.
+
+Requires:
+- token
+
+Parameters: 
+- **name**: optional, part of first or last name
+- **offset**: optional, default=0
+- **limit**: optional, default=10
+
+**Request example**
+```
+GET /users?name=taras HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+[
+    {
+        "userId": "some-unique-id",
+        "username": "username1",
+        "firstName": "Taras",
+        "lastName": "Lavreniuk",
+        "birthday": null,
+        "universityId": uni_id
+    },
+    {
+        "userId": "some-unique-id",
+        "username": "newUser",
+        "firstName": "Taras",
+        "lastName": "Lastname",
+        "birthday": null,
+        "universityId": uni_id
+    },
+    
+]
+```
+
 ## HEAD /usernames/{username}
 
 Parameter:

@@ -1,6 +1,7 @@
 package com.robiumautomations.polyhex.controllers
 
 import com.robiumautomations.polyhex.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -37,4 +38,42 @@ class UserController {
     }
     return ResponseEntity(mapOf("Message" to "User with id: $userId not found."), HttpStatus.NOT_FOUND)
   }
+
+  @GetMapping(
+      "/users",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getUsers(
+      @RequestParam("name", required = false, defaultValue = "") name: String,
+      @RequestParam("offset", required = false, defaultValue = "0") offset: String,
+      @RequestParam("limit", required = false, defaultValue = "10") limit: String
+  ): ResponseEntity<Any> {
+    try {
+      offset.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'offset' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    try {
+      limit.toInt()
+    } catch (e: NumberFormatException) {
+      return ResponseEntity(mapOf("Message" to "Parameter 'limit' is not a number."), HttpStatus.BAD_REQUEST)
+    }
+    return ResponseEntity.ok()
+        .header("limit", limit)
+        .header("offset", offset)
+        .body(
+            userService.getUsers(
+                if (name.isBlank()) null else name.trim(),
+                offset.toInt(),
+                limit.toInt(),
+                AuthenticationUtils.getCurrentUserId()
+            )
+        )
+  }
+
+  @GetMapping(
+      "/all_users",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun getAllUsers() = ResponseEntity.ok().body(userService.getAll())
 }

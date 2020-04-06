@@ -22,4 +22,24 @@ interface UserRepo : JpaRepository<User, UserId> {
       nativeQuery = true
   )
   fun getUsersOfGroup(studyGroupId: String, currentUserId: UserId, nameQuery: String): List<User>
+
+  @Query(
+      value = "SELECT U.* from users U WHERE U.university_id = (SELECT U1.university_id FROM users U1 WHERE U1.user_id = :currentUserId ) " +
+          "AND (U.fname ILIKE :nameQuery OR U.lname ILIKE :nameQuery ) ORDER BY U.lname LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getUsers(nameQuery: String, offset: Int, limit: Int, currentUserId: UserId): List<User>
+
+  @Query(
+      value = "SELECT U.* from users U WHERE U.university_id = (SELECT U1.university_id FROM users U1 WHERE U1.user_id = :currentUserId ) " +
+          " ORDER BY U.lname LIMIT :limit OFFSET :offset ;",
+      nativeQuery = true
+  )
+  fun getUsers(offset: Int, limit: Int, currentUserId: UserId): List<User>
+
+  @Query(
+      value = "SELECT U.* from users U WHERE U.username = :username ;",
+      nativeQuery = true
+  )
+  fun findByUsername(username: String): User?
 }

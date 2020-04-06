@@ -21,6 +21,7 @@ open class UserService : UserDetailsService {
 
   @Autowired
   private lateinit var userCredentialsRepo: UserCredentialsRepo
+
   @Autowired
   private lateinit var userRepo: UserRepo
 
@@ -38,6 +39,10 @@ open class UserService : UserDetailsService {
 
   fun getUserInfo(userId: UserId): User? {
     return userRepo.findByIdOrNull(userId)
+  }
+
+  fun getUserInfoByUsername(username: String): User? {
+    return userRepo.findByUsername(username)
   }
 
   open fun registerNewUser(registrationUser: RegistrationUser): User {
@@ -99,4 +104,18 @@ open class UserService : UserDetailsService {
   fun save(user: User) {
     userRepo.save(user)
   }
+
+  @JvmOverloads
+  fun getUsers(
+      searchTerm: String? = null,
+      offset: Int = 0,
+      limit: Int = 10,
+      currentUserId: UserId
+  ): List<User> {
+    return searchTerm?.let {
+      userRepo.getUsers("%$it%", offset, limit, currentUserId)
+    } ?: userRepo.getUsers(offset, limit, currentUserId)
+  }
+
+  fun getAll() = userRepo.findAll()
 }

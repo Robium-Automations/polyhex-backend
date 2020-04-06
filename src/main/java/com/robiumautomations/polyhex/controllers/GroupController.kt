@@ -235,4 +235,21 @@ class GroupController @Autowired constructor(
         AuthenticationUtils.getCurrentUserId())
     )
   }
+
+  @GetMapping(
+      "/groups/{groupId}",
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun geGroup(
+      @PathVariable("groupId") groupId: String
+  ): ResponseEntity<Any> {
+    return try {
+      ResponseEntity.ok(groupService.getGroup(
+          groupId,
+          AuthenticationUtils.getCurrentUserId())
+      )
+    } catch (e: Exception) {
+      ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
+    }
+  }
 }

@@ -768,3 +768,35 @@ HTTP/1.1 200 OK
     }
 ]
 ```
+
+## GET /groups/{groupId}
+
+Description: returns one specific group info
+
+Requires: 
+- token
+
+Returns:
+- 200 if everything is fine and a study group object
+
+
+Parameters:
+- **groupId**: required
+
+**Request example**
+```
+GET /groups/d830bf15-d8d6-44e4-b56a-44fce8e8e980 HTTP/1.1
+Authorization: Bearer long_token_should_be_here
+```
+
+**Response example**
+```
+HTTP/1.1 200 OK
+
+{
+    "studyGroupId": "d830bf15-d8d6-44e4-b56a-44fce8e8e980",
+    "studyGroupName": "Study group for sse",
+    "subjectId": "b1ca3120-63ce-11ea-bc55-0242ac130003",
+    "semesterId": "a696e319-98fb-4cd4-b0d3-577041010576"
+},
+```

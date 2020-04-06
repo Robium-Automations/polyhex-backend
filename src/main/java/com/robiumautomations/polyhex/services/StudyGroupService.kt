@@ -121,4 +121,9 @@ class StudyGroupService @Autowired constructor(
       userRepo.getUsersOfGroup(studyGroupId = groupId, currentUserId = currentUserId, nameQuery = "%$name%")
     }
   }
+
+  fun getGroup(groupId: String, currentUserId: String): StudyGroup {
+    return studyGroupRepo.findGroupByGroupIdAndUsersUniversity(groupId, currentUserId) ?: throw Exception(
+        "No group with id: $groupId.")
+  }
 }

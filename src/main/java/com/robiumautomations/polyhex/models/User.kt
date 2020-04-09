@@ -24,22 +24,33 @@ class User(
     val lastName: String?,
     @Column(name = "bday")
     val birthday: Date?,
+    @Column(name = "study_program")
+    val studyProgram: String?,
+    @Column(name = "points")
+    val points: Int,
+    @Column(name = "avatar")
+    val avatar: String?,
     @Column(name = "university_id")
     var universityId: String?
 ) {
 
+  @JvmOverloads
   constructor(
       userId: String,
       username: String,
-      firstName: String?,
-      lastName: String?,
-      birthday: Date?
+      firstName: String? = null,
+      lastName: String? = null,
+      studyProgram: String? = null,
+      birthday: Date? = null
   ) : this(
       userId = userId,
       username = username,
       firstName = firstName,
       lastName = lastName,
       birthday = birthday,
+      studyProgram = studyProgram,
+      points = 0,
+      avatar = null,
       universityId = null
   )
 
@@ -49,6 +60,9 @@ class User(
       firstName = null,
       lastName = null,
       birthday = null,
+      studyProgram = null,
+      points = 0,
+      avatar = null,
       universityId = null
   )
 }

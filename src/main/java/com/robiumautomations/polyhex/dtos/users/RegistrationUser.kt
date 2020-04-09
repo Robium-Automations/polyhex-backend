@@ -8,8 +8,9 @@ class RegistrationUser(
     val password: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,
-    val birthday: Date? = null
+    val birthday: Date? = null,
+    val studyProgram: String? = null
 ) {
 
-  constructor() : this(null, null, null, null, null, null)
+  constructor() : this(null, null, null, null, null, null, null)
 }

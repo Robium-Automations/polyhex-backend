@@ -1,6 +1,7 @@
 package com.robiumautomations.polyhex.controllers
 
 import com.robiumautomations.polyhex.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.dtos.users.UpdatedUser
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.services.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,12 +29,25 @@ class UserController {
     }
   }
 
+  @PutMapping(
+      "/users",
+      consumes = [MediaType.APPLICATION_JSON_VALUE],
+      produces = [MediaType.APPLICATION_JSON_VALUE]
+  )
+  fun updateUser(@RequestBody updatedUser: UpdatedUser): ResponseEntity<*> {
+    return try {
+      ResponseEntity(userService.updateUser(updatedUser), HttpStatus.OK)
+    } catch (e: Exception) {
+      ResponseEntity(mapOf("Message" to e.message), HttpStatus.BAD_REQUEST)
+    }
+  }
+
   @GetMapping(
       "/users/{user_id}",
       produces = [MediaType.APPLICATION_JSON_VALUE]
   )
   fun getUser(@PathVariable("user_id") userId: String): ResponseEntity<Any> {
-    userService.getUserInfo(userId)?.let {
+    userService.getUserWithGroups(userId)?.let {
       return ResponseEntity.ok(it)
     }
     return ResponseEntity(mapOf("Message" to "User with id: $userId not found."), HttpStatus.NOT_FOUND)

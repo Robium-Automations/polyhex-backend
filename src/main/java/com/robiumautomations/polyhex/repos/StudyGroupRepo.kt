@@ -24,4 +24,10 @@ interface StudyGroupRepo : JpaRepository<StudyGroup, String> {
       nativeQuery = true
   )
   fun findGroupByGroupIdAndUsersUniversity(groupId: String, currentUserId: String): StudyGroup?
+
+  @Query(
+      value = """SELECT UG.study_group_id FROM users_groups UG WHERE UG.user_id = :currentUserId ;""",
+      nativeQuery = true
+  )
+  fun getUserGroups(currentUserId: String): List<String>
 }

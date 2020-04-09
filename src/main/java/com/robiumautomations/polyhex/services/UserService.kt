@@ -4,16 +4,21 @@ import com.robiumautomations.polyhex.enums.UserRole
 import com.robiumautomations.polyhex.models.User
 import com.robiumautomations.polyhex.models.UserCredentials
 import com.robiumautomations.polyhex.dtos.users.RegistrationUser
+import com.robiumautomations.polyhex.dtos.users.UpdatedUser
+import com.robiumautomations.polyhex.dtos.users.UserWithGroups
 import com.robiumautomations.polyhex.models.UserId
+import com.robiumautomations.polyhex.repos.StudyGroupRepo
 import com.robiumautomations.polyhex.repos.UserCredentialsRepo
 import com.robiumautomations.polyhex.repos.UserRepo
 import com.robiumautomations.polyhex.security.AuthenticationUser
+import com.robiumautomations.polyhex.security.utils.AuthenticationUtils
 import com.robiumautomations.polyhex.security.utils.JwtUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import org.springframework.util.MultiValueMap
 import java.util.*
 
 @Service
@@ -24,6 +29,9 @@ open class UserService : UserDetailsService {
 
   @Autowired
   private lateinit var userRepo: UserRepo
+
+  @Autowired
+  private lateinit var studyGroupRepo: StudyGroupRepo
 
   override fun loadUserByUsername(username: String): UserDetails? {
     return userCredentialsRepo.getByUsername(username)?.let {
@@ -39,6 +47,15 @@ open class UserService : UserDetailsService {
 
   fun getUserInfo(userId: UserId): User? {
     return userRepo.findByIdOrNull(userId)
+  }
+
+  fun getUserWithGroups(userId: UserId): UserWithGroups? {
+    return getUserInfo(userId)?.let {
+      UserWithGroups(
+          it,
+          studyGroupRepo.getUserGroups(it.userId!!)
+      )
+    }
   }
 
   fun getUserInfoByUsername(username: String): User? {
@@ -63,7 +80,8 @@ open class UserService : UserDetailsService {
         username = registrationUser.username!!,
         firstName = registrationUser.firstName,
         lastName = registrationUser.lastName,
-        birthday = registrationUser.birthday
+        birthday = registrationUser.birthday,
+        studyProgram = registrationUser.studyProgram
     ).also {
       save(it)
     }
@@ -111,11 +129,32 @@ open class UserService : UserDetailsService {
       offset: Int = 0,
       limit: Int = 10,
       currentUserId: UserId
-  ): List<User> {
-    return searchTerm?.let {
+  ): List<UserWithGroups> {
+    val users = searchTerm?.let {
       userRepo.getUsers("%$it%", offset, limit, currentUserId)
     } ?: userRepo.getUsers(offset, limit, currentUserId)
+    return users.map { UserWithGroups(it, studyGroupRepo.getUserGroups(it.userId!!)) }
   }
 
-  fun getAll() = userRepo.findAll()
+  fun getAll(): List<UserWithGroups> {
+    return userRepo.findAll().map { UserWithGroups(it, studyGroupRepo.getUserGroups(it.userId!!)) }
+  }
+
+  fun updateUser(updatedUser: UpdatedUser, userId: String = AuthenticationUtils.getCurrentUserId()): User? {
+    return userRepo.findByIdOrNull(userId)?.let {
+      return@let User(
+          userId = it.userId!!,
+          username = it.username!!,
+          firstName = updatedUser.firstName,
+          lastName = updatedUser.lastName,
+          birthday = updatedUser.birthday,
+          studyProgram = updatedUser.studyProgram,
+          points = updatedUser.points,
+          avatar = updatedUser.avatar,
+          universityId = it.universityId
+      ).also { toUpdate ->
+        userRepo.save(toUpdate)
+      }
+    }
+  }
 }

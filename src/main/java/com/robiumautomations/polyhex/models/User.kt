@@ -12,7 +12,7 @@ typealias UserId = String
 @Entity
 @Table(name = "users")
 @Data
-class User(
+open class User(
     @Id
     @Column(name = "user_id")
     val userId: UserId?,

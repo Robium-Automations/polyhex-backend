@@ -1,5 +1,6 @@
 package com.robiumautomations.polyhex.controllers
 
+import com.robiumautomations.polyhex.dtos.users.SignInedUser
 import com.robiumautomations.polyhex.models.UserCredentials
 import com.robiumautomations.polyhex.security.CustomAuthentication
 import com.robiumautomations.polyhex.services.UserService
@@ -30,9 +31,10 @@ class AuthenticationController {
       return ResponseEntity("Specify password.", HttpStatus.BAD_REQUEST)
     }
     return try {
-      ResponseEntity.ok()
-          .header("Authorization", customAuthentication.attemptAuthentication(user.username, user.password))
-          .body(userService.getUserInfoByUsername(user.username))
+      val token = customAuthentication.attemptAuthentication(user.username, user.password)
+      return ResponseEntity.ok()
+          .header("Authorization", token)
+          .body(userService.getUserInfoByUsername(user.username)?.let { SignInedUser(token, it) })
     } catch (e: AuthenticationException) {
       e.printStackTrace()
       ResponseEntity(mapOf("Message" to "Invalid credentials."), HttpStatus.BAD_REQUEST)

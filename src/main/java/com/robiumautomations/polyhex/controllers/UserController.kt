@@ -53,6 +53,14 @@ class UserController {
     return ResponseEntity(mapOf("Message" to "User with id: $userId not found."), HttpStatus.NOT_FOUND)
   }
 
+  @DeleteMapping(
+      "/users"
+  )
+  fun deleteUser(): ResponseEntity<Any> {
+    userService.removeUser(AuthenticationUtils.getCurrentUserId())
+      return ResponseEntity.ok().build()
+  }
+
   @GetMapping(
       "/users",
       produces = [MediaType.APPLICATION_JSON_VALUE]

@@ -157,4 +157,8 @@ open class UserService : UserDetailsService {
       }
     }
   }
+
+  fun removeUser(userId: String) {
+    userRepo.deleteById(userId)
+  }
 }

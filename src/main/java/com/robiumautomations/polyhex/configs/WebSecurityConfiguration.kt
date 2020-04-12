@@ -35,7 +35,7 @@ open class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
 
   @Throws(Exception::class)
   override fun configure(http: HttpSecurity) {
-    http.cors().and().csrf().disable().authorizeRequests()
+    http.csrf().disable().authorizeRequests()
         .antMatchers(
             "/helloworld", "/health", "/signin", "/universities"
         ).permitAll()

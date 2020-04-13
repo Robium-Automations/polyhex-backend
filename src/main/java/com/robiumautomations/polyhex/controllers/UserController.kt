@@ -58,7 +58,7 @@ class UserController {
   )
   fun deleteUser(): ResponseEntity<Any> {
     userService.removeUser(AuthenticationUtils.getCurrentUserId())
-      return ResponseEntity.ok().build()
+    return ResponseEntity.ok().build()
   }
 
   @GetMapping(

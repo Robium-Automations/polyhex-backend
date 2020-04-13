@@ -43,6 +43,7 @@ open class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
         ).permitAll()
         .antMatchers(HttpMethod.POST, "/users").permitAll()
         .antMatchers(HttpMethod.HEAD, "/usernames/*", "/emails/*").permitAll()
+        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         .anyRequest().authenticated()
         .and()
         .addFilter(JwtAuthenticationFilter(authenticationManager()))
@@ -69,20 +70,6 @@ open class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
       it.setAllowUrlEncodedSlash(true)
       it.setAllowSemicolon(true)
     }
-  }
-
-  @Bean
-  open fun corsFilter(): FilterRegistrationBean<*> {
-    val source = UrlBasedCorsConfigurationSource()
-    val config = CorsConfiguration()
-    config.allowCredentials = true
-    config.addAllowedOrigin("*")
-    config.addAllowedHeader("*")
-    config.addAllowedMethod("*")
-    source.registerCorsConfiguration("/**", config)
-    val bean: FilterRegistrationBean<*> = FilterRegistrationBean(CorsFilter(source))
-    bean.order = 0
-    return bean
   }
 
   override fun configure(web: WebSecurity) {

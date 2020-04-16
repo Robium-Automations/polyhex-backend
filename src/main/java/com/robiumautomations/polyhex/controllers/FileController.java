@@ -1,8 +1,11 @@
 package com.robiumautomations.polyhex.controllers;
 
+import javax.naming.NoPermissionException;
+
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,7 @@ import com.robiumautomations.polyhex.models.dtos.files.CreateFileResponseDto;
 import com.robiumautomations.polyhex.models.materials.Material;
 import com.robiumautomations.polyhex.security.utils.AuthenticationUtils;
 import com.robiumautomations.polyhex.services.MaterialService;
+import com.robiumautomations.polyhex.storage.FileNotFoundException;
 
 @Controller
 public class FileController {
@@ -100,5 +104,20 @@ public class FileController {
     final Resource resource =
         materialService.getFile(fileId, AuthenticationUtils.INSTANCE.getCurrentUserId());
     return ResponseEntity.ok().body(resource);
+  }
+
+  @DeleteMapping("/files/{fileId}")
+  @ResponseBody
+  public ResponseEntity deleteFile(@PathVariable("fileId") String fileId) {
+    try {
+      materialService.deleteFile(fileId, AuthenticationUtils.INSTANCE.getCurrentUserId());
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+      return ResponseEntity.notFound().header("Message", e.getMessage()).build();
+    } catch (NoPermissionException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).header("Message", e.getMessage()).build();
+    }
+    return ResponseEntity.ok().build();
   }
 }

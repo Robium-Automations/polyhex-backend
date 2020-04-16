@@ -1,9 +1,15 @@
 package com.robiumautomations.polyhex.services;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+
+import javax.naming.NoPermissionException;
 
 import com.robiumautomations.polyhex.models.dtos.files.CreateFileResponseDto;
 import com.robiumautomations.polyhex.models.materials.Material;
@@ -16,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -91,5 +98,25 @@ public class MaterialService {
     } catch (MalformedURLException e) {
       throw new FileNotFoundException("Could not read fileId: " + fileId, e);
     }
+  }
+
+  @Transactional
+  public void deleteFile(String fileId, String userId) throws NoPermissionException {
+    Optional<Material> materialOptional = materialRepo.findById(fileId);
+    if (!materialOptional.isPresent()) {
+      throw new FileNotFoundException("There is now file with id: " + fileId);
+    }
+    Material material = materialOptional.get();
+    if (!material.getAuthorId().equals(userId)) {
+      throw new NoPermissionException("User with id: " + userId + " cannot delete file with id: " + fileId);
+    }
+    Path fileToDeletePath = Paths.get(material.getPath());
+    try {
+      Files.delete(fileToDeletePath);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    shareMaterialRepo.deleteByMaterialId(fileId);
+    materialRepo.deleteById(fileId);
   }
 }

@@ -1,11 +1,14 @@
 create table users
 (
     user_id       varchar not null,
-    username      varchar not null,
+    bday          date,
     fname         varchar,
     lname         varchar,
-    bday          date,
-    university_id varchar
+    username      varchar not null,
+    university_id varchar,
+    study_program varchar,
+    points        integer default 0,
+    avatar        varchar
 );
 
 create unique index table_name_user_id_uindex
@@ -13,4 +16,3 @@ create unique index table_name_user_id_uindex
 
 create unique index table_name_username_uindex
     on users (username);
-
